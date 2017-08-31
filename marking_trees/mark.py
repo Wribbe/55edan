@@ -6,14 +6,21 @@ import random
 MARKED = 'm'
 UNMARKED = 'u'
 
+R2_indexes = []
+R3_indexes = []
+
+num_marked = 0
+global_N = 0
+
 def main():
     start_h = 2
-#    max_h = 20
-    max_h = 4
-    tree = []
-    visited = []
+    max_h = 20
 
-    def get_tree(N):
+    def new_tree(N):
+        global global_N
+        global num_marked
+        global_N = N
+        num_marked = 0
         return ([False]*N, [UNMARKED]*N)
 
     def even(value):
@@ -38,7 +45,11 @@ def main():
         mark(index-1)
 
     def mark(index):
+        global num_marked
+        if marked(index):
+            return
         tree[index] = MARKED;
+        num_marked += 1
 
     def marked(index):
         if type(index) == list:
@@ -52,32 +63,66 @@ def main():
             for ind in index:
                 execute_rule(ind)
         else:
-            if index > len(tree)-1 or visited[index]:
+            if index < 0 or index > global_N-1 or visited[index]:
                 return
-            if marked(children(index)) or \
-               marked([parent(index), sibling(index)]):
-                mark(index)
-
+            if not marked(index):
+                if marked(children(index)) or \
+                   marked([parent(index), sibling(index)]):
+                    print("executed rule..")
+                    mark(index)
             visited[index] = True
-            execute_rule(parent(index)) # Travel upwards.
-            execute_rule(children(index)) # Travel downwards.
+            execute_rule(parent(index)) # Continue upwards.
+            execute_rule(children(index)) # Continue downwards.
 
     def all_marked():
-        return all([node == MARKED for node in tree])
+        return num_marked == global_N
+
+    def R1(N):
+        index = random.randint(0,N-1)
+        mark(index)
+        return index
+
+    def R2(N):
+        global R2_indexes
+        if not R2_indexes:
+            R2_indexes = list(range(N))
+            random.shuffle(R2_indexes)
+        index = R2_indexes.pop()
+        mark(index)
+        return index
+
+    def R3(N):
+        global R3_indexes
+        if not R3_indexes:
+            R3_indexes = list(range(N))
+            random.shuffle(R3_indexes)
+        index = R3_indexes.pop()
+        while marked(index): # Throw away already marked indexes.
+            index = R3_indexes.pop()
+        mark(index)
+        return index
+
+    def run_untill_marked(N, marking_function):
+        global tree
+        global visited
+        visited, tree = new_tree(N)
+        rounds = 0
+        while not all_marked():
+            index = marking_function(N)
+            vistited = [False] * global_N
+            execute_rule(index)
+            rounds += 1
+        return rounds
 
     for h in range(start_h, max_h+1):
+
         N = int(math.pow(2, h)-1)
-        visited, tree = get_tree(N)
-        if N == 7:
-            mark1(1)
-            mark1(4)
-            mark1(6)
-            print(tree)
-            print(all_marked())
-            mark1(5)
-            execute_rule(4)
-            print(tree)
-            print(all_marked())
+
+        rounds = [run_untill_marked(N, method) for method in [R1,R2,R3]]
+
+        print("N={}, h={}:".format(N, h))
+        for index, num_rounds in enumerate(rounds, start=1):
+            print("  R{} = {}".format(index, num_rounds))
 
 if __name__ == "__main__":
     main()
