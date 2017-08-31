@@ -46,16 +46,16 @@ def marking_rule(index, tree):
 def R1(N):
     return random.randint(1,N-1)
 
-def R2(N, stored):
+def R2(stored):
     return stored.pop()
 
-def R3(N, stored, tree):
+def R3(stored, tree):
     index = stored.pop()
     while tree[index]:
         index = stored.pop()
     return index
 
-def traverse_marking_rule(index, tree, visited):
+def iterative_marking_rule(index, tree, visited):
     if index < 0 or index > len(tree)-1 or visited[index]:
         return 0
     num_marked = 0
@@ -65,27 +65,28 @@ def traverse_marking_rule(index, tree, visited):
         num_marked += 1
 
     left, right = children(index)
-    num_marked += traverse_marking_rule(left, tree, visited)
-    num_marked += traverse_marking_rule(right, tree, visited)
+    num_marked += iterative_marking_rule(left, tree, visited)
+    num_marked += iterative_marking_rule(right, tree, visited)
 
-    num_marked += traverse_marking_rule(parent(index), tree, visited)
+    num_marked += iterative_marking_rule(parent(index), tree, visited)
     return num_marked
 
-def mark_tree(tree, function, function_input, predefined_indexes=[]):
+def mark_tree(tree, function, function_input, input_indexes=[]):
 
     N = len(tree)
     num_marked = len([val for val in tree if val == MARKED])
     rotations = 0
     while num_marked != N:
-        if predefined_indexes:
-            new_index = predefined_indexes.pop()
+        if input_indexes:
+            new_index = input_indexes.pop()
         else:
             new_index = function(*function_input)
         if not marked(new_index, tree):
             mark(new_index, tree)
             num_marked += 1
-            num_marked += traverse_marking_rule(new_index, tree, [False] * N)
+            num_marked += iterative_marking_rule(new_index, tree, [False] * N)
         rotations += 1
     return rotations
+
 rotations = mark_tree(example_tree, R1, [len(example_tree)], [4])
 print(rotations)
