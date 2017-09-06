@@ -69,10 +69,13 @@ def mark(index, tree):
 def mark_tree(value, tree):
     mark_queue = [value] if not marked(value, tree) else []
     n_marked = 0
+
     while mark_queue:
-        sub_queues = [mark(i, tree) for i in mark_queue if not marked(i, tree)]
-        n_marked += len(sub_queues)
-        mark_queue = [index for sub_queue in sub_queues for index in sub_queue]
+        index_to_mark = mark_queue.pop(0)
+        if marked(index_to_mark, tree):
+            continue
+        mark_queue += mark(index_to_mark, tree)
+        n_marked += 1
     return n_marked
 
 def R1(N):
