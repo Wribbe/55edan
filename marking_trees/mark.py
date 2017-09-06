@@ -29,23 +29,42 @@ def marked(index, tree):
     return tree[index][0] == MARKED
 
 def mark(index, tree):
-    # Collect and return cascade markings that should be made due to marking
-    # index.
-    cascade = []
-    tree[index] = (MARKED, tree[index][1])
-    if has_children(index, tree):
-        child = children(index)
-        if marked(child[0], tree) and not marked(child[1], tree):
-            cascade += [child[1]]
-        elif marked(child[1], tree) and not marked(child[0], tree):
-            cascade += [child[0]]
+    """ Apply marking rules and return nodes that should be marked in the
+    future.
 
-    if index > 0:
-        if marked(sibling(index), tree) and not marked(parent(index), tree):
-            cascade += [parent(index)]
-        elif marked(parent(index), tree) and not marked(sibling(index), tree):
-            cascade += [sibling(index)]
-    return cascade
+    Rules:
+        - If parent and sibling to a node is marked, mark node.
+        - If both children to node are marked, mark node.
+    """
+    to_be_marked = []
+    tree[index] = (MARKED, tree[index][1])
+
+    if has_children(index, tree):
+
+        child_left, child_right = children(index)
+
+        marked_left = marked(child_left, tree)
+        marked_right = marked(child_right, tree)
+
+        if marked_left and not marked_right:
+            to_be_marked.append(child_right)
+        elif marked_right and not marked_left:
+            to_be_marked.append(child_left)
+
+    if index > 0: # Not in root node.
+
+        index_parent = parent(index)
+        index_sibling = sibling(index)
+
+        marked_parent = marked(index_parent, tree)
+        marked_sibling = marked(index_sibling, tree)
+
+        if not marked_parent and marked_sibling:
+            to_be_marked.append(index_parent)
+        elif not marked_sibling and marked_parent:
+            to_be_marked.append(index_sibling)
+
+    return to_be_marked
 
 def mark_tree(value, tree):
     mark_queue = [value] if not marked(value, tree) else []
