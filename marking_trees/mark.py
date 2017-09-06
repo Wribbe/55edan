@@ -23,7 +23,7 @@ def children(index):
     return [left_child, right_child]
 
 def has_children(index, tree):
-    return [i for i in children(index) if i < len(tree)] != []
+    return [i for i in children(index) if i < len(tree)]
 
 def marked(index, tree):
     return tree[index][0] == MARKED
