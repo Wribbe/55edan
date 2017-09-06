@@ -26,7 +26,7 @@ def has_children(index, tree):
     return [i for i in children(index) if i < len(tree)]
 
 def marked(index, tree):
-    return tree[index][0] == MARKED
+    return tree[index] == MARKED
 
 def mark(index, tree):
     """ Apply marking rules and return nodes that should be marked in the
@@ -37,7 +37,7 @@ def mark(index, tree):
         - If both children to node are marked, mark node.
     """
     to_be_marked = []
-    tree[index] = (MARKED, tree[index][1])
+    tree[index] = MARKED
 
     if has_children(index, tree):
 
@@ -94,7 +94,7 @@ def R3(tree):
 
 def run(index_generator, seed, tree):
     iterations = 0
-    n_marked = sum([1 for i in range(0, len(tree)) if marked(i, tree)])
+    n_marked = len([node for node in tree if node == MARKED])
     while n_marked != len(tree):
         iterations += 1
         n_marked += mark_tree(index_generator(seed), tree)
@@ -107,19 +107,19 @@ def main():
         N = int(math.pow(2,h)-1)
         print("h={},N={}".format(h,N))
         # Setup for R1.
-        tree = [(UNMARKED, i) for i in range(0, N)]
+        tree = [UNMARKED] * N
         R1_iterations = run(R1, N, tree)
         print("  R1 - iterations: {}".format(R1_iterations))
 
         # Setup for R2.
-        tree = [(UNMARKED, i) for i in range(0, N)]
+        tree = [UNMARKED] * N
         stored = list(range(N))
         random.shuffle(stored)
         R2_iterations = run(R2, stored, tree)
         print("  R2 - iterations: {}".format(R2_iterations))
 
         # Setup for R3.
-        tree = [(UNMARKED, i) for i in range(0, N)]
+        tree = [UNMARKED] * N
         stored = list(range(N))
         random.shuffle(stored)
         R3_iterations = run(R3(tree), stored, tree)
@@ -127,10 +127,8 @@ def main():
         print()
 
 def test_example():
-    example_tree = [
-        (MARKED, 0),(UNMARKED, 1),(UNMARKED, 2),(MARKED, 3),(UNMARKED, 4),
-        (MARKED, 5),(UNMARKED, 6)
-    ]
+    example_tree = [MARKED, UNMARKED ,UNMARKED ,MARKED ,UNMARKED, MARKED,
+            UNMARKED]
 
     #Example tree from paper, should complete in one round.
     iterations = run(lambda seed: seed, 4, example_tree)
