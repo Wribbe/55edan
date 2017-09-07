@@ -4,7 +4,12 @@ import sys
 import json
 import math
 
-import matplotlib.pyplot as plt
+def H(n):
+  n = int(n)
+  value = 0
+  for k in range(1,n+1):
+    value += 1.0/k
+  return value
 
 if __name__ == "__main__":
   args = sys.argv[1:]
@@ -40,12 +45,14 @@ if __name__ == "__main__":
       if key == "R1":
 
         Npart = (1.0/4.0)*int(N)
-
         #theoretical_distrb = Npart*math.log(Npart, 2)
+
         gamma = 0.5772156649
-        theoretical_distrb = Npart * (math.log(Npart) + gamma) + 1/2 + 1/Npart
+#        theoretical_distrb = Npart * H(int(Npart))
+        theoretical_distrb = 2 * Npart * H(Npart)
 
         y_to_plot.append(mean)
+        x_to_plot.append(theoretical_distrb)
         x_to_plot.append(theoretical_distrb)
         print("Theoretical distribution for R1? -- {}".format(theoretical_distrb))
         print("theo / mean = {}".format(theoretical_distrb / mean))
