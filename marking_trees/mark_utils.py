@@ -8,6 +8,13 @@ KEY_R1 = "R1"
 KEY_R2 = "R2"
 KEY_R3 = "R3"
 
+NO_OUTPUT = False
+
+def our_print(text="", **kwargs):
+    if NO_OUTPUT:
+        return
+    print(text, **kwargs)
+
 def dump_json(data):
     """ Assemble dict data in data list and print to standard out. """
     json_dict = {}
@@ -45,9 +52,9 @@ def add_to_dict(dictionary, keys, value, last=False):
         # Ensure that values are wrapped in a list to enable expansion.
         if not type(values) == list:
             values = [values]
-        print(fmt_text.format(*values))
+        our_print(fmt_text.format(*values))
         if last: # Additional spacing after last entry.
-            print()
+            our_print()
 
     # Make sure that it's possible to iterate over provided keys.
     if not type(keys) == list:

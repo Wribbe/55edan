@@ -5,6 +5,7 @@ import random
 import re
 import sys
 
+import mark_utils
 from mark_utils import *
 
 MARKED = 'm'
@@ -107,7 +108,7 @@ def print_info(iterations, erase=False):
         """ Re-/over-writing print method to standard error output without
         added newline.
         """
-        print("{}\r".format(text), end="", file=sys.stderr)
+        our_print("{}\r".format(text), end="", file=sys.stderr)
 
     format_info = "INFO -- current iteration: {}"
     info_line = format_info.format(iterations)
@@ -167,13 +168,13 @@ def main():
             add_to_dict(dict_data, [KEY_ITERATIONS, KEY_R3], ["R3", R3_iterations],
                     last=True)
 
-        print("Done with iteration #{}".format(iteration+1), end="")
+        our_print("Done with iteration #{}".format(iteration+1), end="")
         if OUTPUT_JSON:
-            print(", dumping JSON data to: {}".format(FILE_JSON_OUTPUT), end="")
+            our_print(", dumping JSON data to: {}".format(FILE_JSON_OUTPUT), end="")
             json_data = dump_json(data)
             with open(FILE_JSON_OUTPUT, 'w') as fp:
                 fp.write(json_data+'\n')
-        print(".\n")
+        our_print(".\n")
 
 def test_tree_passes():
     # Example tree from paper, should complete in one round.
@@ -204,8 +205,10 @@ if __name__ == "__main__":
             OUTPUT_JSON = True
         elif re.match(r"--iterations=\d+", arg):
             ITERATIONS = int(arg.split('=')[-1])
-        elif re.match(r"--output=\s+", arg):
+        elif re.match(r"--output_file=", arg):
             FILE_JSON_OUTPUT = arg.split('=')[-1]
+        elif arg == "--quiet":
+            mark_utils.NO_OUTPUT = True
 
     # Test passed, run main method.
     main()
