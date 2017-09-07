@@ -2,9 +2,11 @@
 
 import math
 import random
+import sys
 
 MARKED = 'm'
 UNMARKED = 'u'
+INFO_OUTPUT = True
 
 def sibling(index):
     if index%2 == 0:
@@ -90,6 +92,24 @@ def R3(stored, tree):
         index = stored.pop()
     return index
 
+def print_info(iterations, erase=False):
+    if not INFO_OUTPUT:
+        return
+
+    def rewriting_print(text):
+        """ Re-/over-writing print method to standard error output without
+        added newline.
+        """
+        print("{}\r".format(text), end="", file=sys.stderr)
+
+    format_info = "INFO -- current iteration: {}"
+    info_line = format_info.format(iterations)
+
+    if erase:
+        # Make sure all previously written characters are replaced with spaces.
+        info_line = ' '*len(info_line)
+    rewriting_print(info_line)
+
 def run(index_generator, generator_input, tree):
     iterations = 0
     n_marked = len([node for node in tree if node == MARKED])
@@ -100,6 +120,8 @@ def run(index_generator, generator_input, tree):
         #   function(list, of, vars)
         next_index = index_generator(*generator_input)
         n_marked += mark_tree(next_index, tree)
+        print_info(iterations)
+    print_info(iterations, erase=True)
     return iterations
 
 def main():
@@ -143,6 +165,9 @@ def test_example():
     return True
 
 if __name__ == "__main__":
+    args = sys.argv[1:]
+    if '--no-info' in args:
+        INFO_OUTPUT = False
     if test_example():
         main()
     else:
