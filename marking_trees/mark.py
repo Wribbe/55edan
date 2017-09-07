@@ -80,8 +80,8 @@ def mark_tree(value, tree):
         n_marked += 1
     return n_marked
 
-def R1(N):
-    return random.randint(0,N-1)
+def R1(N, start=0):
+    return random.randint(start,N-1)
 
 def R2(stored):
     return stored.pop()
@@ -150,25 +150,27 @@ def main():
         print("  R3 - iterations: {}".format(R3_iterations))
         print()
 
-def test_example():
+def test_tree_passes():
+    # Example tree from paper, should complete in one round.
     example_tree = [
             MARKED, UNMARKED, UNMARKED, MARKED, UNMARKED, MARKED, UNMARKED
             ]
 
-    # Example tree from paper, should complete in one round.
-    return_value = lambda x: x # Returns input value.
-    iterations = run(return_value, [4], example_tree)
-    if not iterations == 1:
-        print("Example tree should complete in one iteration " +\
-              "with R1 and input-index 4, aborting. ")
-        return False
-    return True
+    # Make sure that R1 picks a value between 4 and 5-1 --> 4.
+    R1start = 4
+    R1stop = 5
+    iterations = run(R1, [R1stop,R1start], example_tree)
+    return iterations == 1
 
 if __name__ == "__main__":
+
     args = sys.argv[1:]
     if '--no-info' in args:
         INFO_OUTPUT = False
-    if test_example():
-        main()
-    else:
-        print("Test example failed. Abort.")
+
+    if not test_tree_passes():
+        print("Example tree should complete in one iteration " +\
+              "with R1 and input-index 4, aborting. ")
+        sys.exit(-1)
+
+    main()
