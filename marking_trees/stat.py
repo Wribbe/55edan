@@ -43,7 +43,7 @@ if __name__ == "__main__":
 
         #theoretical_distrb = Npart*math.log(Npart, 2)
         gamma = 0.5772156649
-        theoretical_distrb = Npart * (math.log(Npart) + gamma)
+        theoretical_distrb = Npart * (math.log(Npart) + gamma) + 1/2 + 1/Npart
 
         y_to_plot.append(mean)
         x_to_plot.append(theoretical_distrb)
