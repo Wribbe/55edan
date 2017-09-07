@@ -84,20 +84,22 @@ def R1(N):
 def R2(stored):
     return stored.pop()
 
-def R3(tree):
-    def lam(stored):
+def R3(stored, tree):
+    index = stored.pop()
+    while marked(index, tree):
         index = stored.pop()
-        while marked(index, tree):
-            index = stored.pop()
-        return index
-    return lam
+    return index
 
-def run(index_generator, seed, tree):
+def run(index_generator, generator_input, tree):
     iterations = 0
     n_marked = len([node for node in tree if node == MARKED])
     while n_marked != len(tree):
         iterations += 1
-        n_marked += mark_tree(index_generator(seed), tree)
+        # The pattern `function(*[list, of, vars])` is equal to the following
+        # call:
+        #   function(list, of, vars)
+        next_index = index_generator(*generator_input)
+        n_marked += mark_tree(next_index, tree)
     return iterations
 
 def main():
@@ -108,21 +110,21 @@ def main():
         print("h={},N={}".format(h,N))
         # Setup for R1.
         tree = [UNMARKED] * N
-        R1_iterations = run(R1, N, tree)
+        R1_iterations = run(R1, [N], tree)
         print("  R1 - iterations: {}".format(R1_iterations))
 
         # Setup for R2.
         tree = [UNMARKED] * N
         stored = list(range(N))
         random.shuffle(stored)
-        R2_iterations = run(R2, stored, tree)
+        R2_iterations = run(R2, [stored], tree)
         print("  R2 - iterations: {}".format(R2_iterations))
 
         # Setup for R3.
         tree = [UNMARKED] * N
         stored = list(range(N))
         random.shuffle(stored)
-        R3_iterations = run(R3(tree), stored, tree)
+        R3_iterations = run(R3, [stored, tree], tree)
         print("  R3 - iterations: {}".format(R3_iterations))
         print()
 
@@ -130,8 +132,9 @@ def test_example():
     example_tree = [MARKED, UNMARKED ,UNMARKED ,MARKED ,UNMARKED, MARKED,
             UNMARKED]
 
-    #Example tree from paper, should complete in one round.
-    iterations = run(lambda seed: seed, 4, example_tree)
+    # Example tree from paper, should complete in one round.
+    return_value = lambda x: x # Returns input value.
+    iterations = run(return_value, [4], example_tree)
     if not iterations == 1:
         print("Example tree should complete in one iteration " +\
               "with R1 and input-index 4, aborting. ")
