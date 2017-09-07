@@ -3,6 +3,7 @@
 import json
 import math
 import random
+import re
 import sys
 
 MARKED = 'm'
@@ -10,6 +11,7 @@ UNMARKED = 'u'
 
 INFO_OUTPUT = True
 OUTPUT_JSON = False
+ITERATIONS = 1
 
 def sibling(index):
     if index%2 == 0:
@@ -221,35 +223,36 @@ def main():
         # Print output with predefined formatting.
         output_printer(output_formats[main_key], value, last)
 
-    for h in range(h_start,h_max+1):
+    for _ in range(ITERATIONS):
+        for h in range(h_start,h_max+1):
 
-        # Create and append data dictionary.
-        dict_data = {}
-        data.append(dict_data)
+            # Create and append data dictionary.
+            dict_data = {}
+            data.append(dict_data)
 
-        # Setup and add heading to dict.
-        N = int(math.pow(2,h)-1)
-        add_to_dict(dict_data, KEY_HEADING, [h, N])
+            # Setup and add heading to dict.
+            N = int(math.pow(2,h)-1)
+            add_to_dict(dict_data, KEY_HEADING, [h, N])
 
-        # Setup for R1.
-        tree = [UNMARKED] * N
-        R1_iterations = run(R1, [N], tree)
-        add_to_dict(dict_data, [KEY_ITERATIONS, KEY_R1], ["R1", R1_iterations])
+            # Setup for R1.
+            tree = [UNMARKED] * N
+            R1_iterations = run(R1, [N], tree)
+            add_to_dict(dict_data, [KEY_ITERATIONS, KEY_R1], ["R1", R1_iterations])
 
-        # Setup for R2.
-        tree = [UNMARKED] * N
-        stored = list(range(N))
-        random.shuffle(stored)
-        R2_iterations = run(R2, [stored], tree)
-        add_to_dict(dict_data, [KEY_ITERATIONS, KEY_R2], ["R2", R2_iterations])
+            # Setup for R2.
+            tree = [UNMARKED] * N
+            stored = list(range(N))
+            random.shuffle(stored)
+            R2_iterations = run(R2, [stored], tree)
+            add_to_dict(dict_data, [KEY_ITERATIONS, KEY_R2], ["R2", R2_iterations])
 
-        # Setup for R3.
-        tree = [UNMARKED] * N
-        stored = list(range(N))
-        random.shuffle(stored)
-        R3_iterations = run(R3, [stored, tree], tree)
-        add_to_dict(dict_data, [KEY_ITERATIONS, KEY_R3], ["R3", R3_iterations],
-                last=True)
+            # Setup for R3.
+            tree = [UNMARKED] * N
+            stored = list(range(N))
+            random.shuffle(stored)
+            R3_iterations = run(R3, [stored, tree], tree)
+            add_to_dict(dict_data, [KEY_ITERATIONS, KEY_R3], ["R3", R3_iterations],
+                    last=True)
 
 def test_tree_passes():
     # Example tree from paper, should complete in one round.
@@ -265,18 +268,21 @@ def test_tree_passes():
 
 if __name__ == "__main__":
 
-    # Parse command line arguments.
-    args = sys.argv[1:]
-    if '--no-info' in args:
-        INFO_OUTPUT = False
-    if '--json' in args:
-        OUTPUT_JSON = True
-
     # Test if test tree passes, otherwise abort.
     if not test_tree_passes():
         print("Example tree should complete in one iteration " +\
               "with R1 and input-index 4, aborting. ")
         sys.exit(-1)
+
+    # Parse command line arguments.
+    args = sys.argv[1:]
+    for arg in args:
+        if arg == '--no-info':
+            INFO_OUTPUT = False
+        elif arg ==  '--json':
+            OUTPUT_JSON = True
+        elif re.match(r"--iterations=\d+", arg):
+            ITERATIONS = int(arg.split('=')[-1])
 
     # Test passed, run main method.
     main()
