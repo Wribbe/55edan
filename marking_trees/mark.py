@@ -129,8 +129,9 @@ def main():
         print()
 
 def test_example():
-    example_tree = [MARKED, UNMARKED ,UNMARKED ,MARKED ,UNMARKED, MARKED,
-            UNMARKED]
+    example_tree = [
+            MARKED, UNMARKED, UNMARKED, MARKED, UNMARKED, MARKED, UNMARKED
+            ]
 
     # Example tree from paper, should complete in one round.
     return_value = lambda x: x # Returns input value.
