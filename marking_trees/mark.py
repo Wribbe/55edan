@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import json
 import math
 import random
 import sys
@@ -139,6 +140,32 @@ def main():
     KEY_R2 = "R2"
     KEY_R3 = "R3"
 
+    def dump_json():
+        """ Assemble dict data in data list and print to standard out. """
+        json_dict = {}
+        # Iterate over all current dictionaries in data.
+        for dictionary in data:
+            _, N = dictionary.get(KEY_HEADING)
+            # Make sure a dictionary for current N exists.
+            Ndict = json_dict.get(N)
+            if not Ndict:
+                Ndict = json_dict[N] = {}
+            # Iterate over all 'choice-functions'.
+            for Rx in [KEY_R1, KEY_R2, KEY_R3]:
+                # Make sure there exists a list to store iteration values.
+                Rlist = Ndict.get(Rx)
+                if not Rlist:
+                    Rlist = Ndict[Rx] = []
+                # Get number of iterations for Rx.
+                _, iterations = dictionary[KEY_ITERATIONS][Rx]
+                # Append the number of iterations to the correct list.
+                Rlist.append(iterations)
+        # Create pretty printed JSON output.
+        json_string = json.dumps(json_dict, sort_keys=True, indent=4,
+                separators=(',', ': '))
+        # Print JSON output to standard out.
+        print(json_string)
+
     def add_to_dict(dictionary, keys, value, last=False):
 
         output_formats = {
@@ -161,6 +188,8 @@ def main():
             print(fmt_text.format(*values), file=output_stream)
             if last: # Additional spacing after last entry.
                 print()
+                if OUTPUT_JSON:
+                    dump_json()
 
         # Make sure that it's possible to iterate over provided keys.
         if not type(keys) == list:
