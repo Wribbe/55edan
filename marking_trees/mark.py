@@ -205,7 +205,7 @@ if __name__ == "__main__":
             OUTPUT_JSON = True
         elif re.match(r"--iterations=\d+", arg):
             ITERATIONS = int(arg.split('=')[-1])
-        elif re.match(r"--output_file=", arg):
+        elif re.match(r"--output-file=", arg):
             FILE_JSON_OUTPUT = arg.split('=')[-1]
         elif arg == "--quiet":
             mark_utils.NO_OUTPUT = True
