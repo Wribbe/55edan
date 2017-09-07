@@ -164,13 +164,16 @@ def test_tree_passes():
 
 if __name__ == "__main__":
 
+    # Parse command line arguments.
     args = sys.argv[1:]
     if '--no-info' in args:
         INFO_OUTPUT = False
 
+    # Test if test tree passes, otherwise abort.
     if not test_tree_passes():
         print("Example tree should complete in one iteration " +\
               "with R1 and input-index 4, aborting. ")
         sys.exit(-1)
 
+    # Test passed, run main method.
     main()
