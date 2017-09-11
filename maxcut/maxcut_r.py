@@ -43,6 +43,8 @@ def main(args):
                 destination -= 1
                 # Add edge to correct index.
                 vertices[index].append((destination, weight))
+                # Add same edge to to destination index.
+                vertices[destination].append((index, weight))
     except FileNotFoundError as e:
         print("Could not open '{}', aborting.".format(filename),
               file=sys.stderr)
