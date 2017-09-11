@@ -2,7 +2,7 @@
 
 import sys
 import os
-import regex
+import re
 
 def make_graph(n, m, edges):
     # vertex format := (edge-count, [ (dest, weight)* ])
