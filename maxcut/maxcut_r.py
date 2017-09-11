@@ -1,8 +1,16 @@
 #!/usr/bin/env python3
 
 import sys
+import random
 
 EXIT_ERROR = -1
+
+def R(vertices):
+    A = set()
+    for index in range(len(vertices)):
+        if random.choice([True, False]) == True:
+            A.add(index)
+    return A
 
 def print_data(vertices):
     # {x} specifies the x'th input to be used by format.
