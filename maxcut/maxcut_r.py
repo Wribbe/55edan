@@ -20,6 +20,7 @@ def make_graph(n, m, edges):
     return vertex
 
 def load_graph(folder, filename):
+
     load_path = os.path.join(folder, filename)
 
     if filename in os.listdir(folder):
@@ -45,4 +46,10 @@ def main(filename):
     load_graph(folder, filename)
 
 if __name__ == '__main__':
-    main(sys.argv[1])
+    usage = "Usage: [python] {} input_file.txt"
+    args = sys.argv[1:]
+    if not args:
+        print(usage.format(__file__))
+        sys.exit(-1)
+    filename = args[0]
+    main(filename)
