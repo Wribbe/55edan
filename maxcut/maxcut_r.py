@@ -16,7 +16,7 @@ def print_graph(vertices):
 
 def main(args):
 
-    usage = "[python] {} input_file.txt"
+    usage = "[python] {} input_file.txt [--print-tree]"
     if not args:
         print(usage.format(__file__))
         return EXIT_ERROR
@@ -48,7 +48,7 @@ def main(args):
               file=sys.stderr)
         return EXIT_ERROR
 
-    if '--print' in args:
+    if '--print-tree' in args:
         print_graph(vertices)
 
 if __name__ == "__main__":
