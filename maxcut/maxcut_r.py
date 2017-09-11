@@ -46,6 +46,9 @@ def load_data(filename):
             vertices[destination].append((index, weight))
     return vertices
 
+def c(subset_A):
+    return 1337
+
 def main(args):
 
     usage = "[python] {} input_file.txt [--print-data]"
@@ -64,6 +67,11 @@ def main(args):
 
     if '--print-data' in args:
         print_data(vertices)
+
+    subset_A = R(vertices)
+    cut_sum = c(subset_A)
+
+    print("Cut sum = {}".format(cut_sum))
 
 if __name__ == "__main__":
     args = sys.argv[1:]
