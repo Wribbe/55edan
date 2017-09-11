@@ -1,0 +1,115 @@
+Approximation Algorithm for Maximum Cut.
+----------------------------------------
+
+=====
+MAIN:
+=====
+
+  Algorithm R.
+  ------------
+
+    1.) Implement algorithm.
+    2.) Fill in report.
+      Document generally:
+      -------------------
+        [ ] -- Names of all participants.
+        [ ] -- Running time of R, asymptotes allowed.
+        [ ] -- Number of random bits used by R, no asymptotes.
+      pw09_100.y.txt, t = 100 runs.
+      -----------------------------
+        [ ] -- Average cut-size of C = [...]
+        [ ] -- cut-size roughly [...] % of optimum OPT = 13658.
+        [ ] -- Display cut-size as a histogram.
+      matching_1000.txt, t = 100 runs.
+      --------------------------------
+        [ ] -- Average cut-size of C = [...]
+        [ ] -- cut-size roughly [...] % of optimum OPT = 13658.
+        [ ] -- Display cut-size as a histogram.
+      Analysis of performance guarantee.
+      ----------------------------------
+        [ ] -- Show that R performs with a exception C, no worse C >= X*OPT
+               where X is a constant.
+
+        View C as random variable that gives size of cut based on ['the']
+        random choices. W denotes sum of all weight of G (graph) -->
+
+            W = sum_over(all e in E, w(e))
+
+        then E[C] = 0.5 * W. (Expectation of getting C is one half of the sum
+        of the total weights of all edges in the graph.)
+
+        Hints to 'see' the above statement:
+        -----------------------------------
+          - Define indicator variable X_uv for every edge uv in E as follows:
+            1.) X_uv = 1 if uv crosses the cut --> either of:
+                 {u in A && v not in A} || {u not in A and v in A}.
+            2.) X_uv = 0 otherwise, {u and v in A}.
+          - Then Pr(X_uv = 1) = [...] (The probability of X_uv = 1 is ?)
+          - E[C] = [...]  (The expectation for getting cut C is ?)
+          - Finally, E[C] >= [...] * OPT because [...]
+
+        [ ] -- Fill in Pr(X_uv = 1) = [...]
+        [ ] -- Fill in E[C] = [...]
+        [ ] -- Fill in E[C] >= [...] * OPT because [...].
+
+        Keywords for explaining the above should be 'like' the following:
+        -----------------------------------------------------------------
+          - "because X and Y are independent."
+          - "disjoint"
+          - "by linearity of expectation"
+          - "because the weights are positive"
+
+  Perspective:
+  ------------
+    Lab establishes:
+      - Minimal skill in algorithm-implementation.
+      - Probabilistic algorithm analysis:
+        - Independence
+        - Linearity of expectation
+        - 'Trick' of computing expectation by using indicator random variables.
+        - Approximation guarantees:
+            Finding upper and lower bounds by:
+              - Exhibiting a concrete "bad instance".
+              - Comparison to a hypothetical optimum.
+        - Measures are concentrated around the expectation (Histogram).
+
+  General musings:
+  ----------------
+    G = (V,E) is a undirected (think shaking hands) graph.
+    V - vertices/points of the graph.
+    E - edges between vertices, has individual weights.
+    n - number of vertices |V|.
+    m - number of edges |E|.
+    maxcut - 'cut' as many vertices in such a way that the sum of the weights
+              of the 'crossed' edges is as large as possible.
+
+              a -- 3 -|--- b -10- d        a -- 3 ---- b -|10- d
+             /        |   /               /           /   cut = 10
+             \        |  /                \          /
+              c -- 4 -|-              <    c -- 4 --
+                      cut = 4+3 = 7
+
+              P_1 = {a,c},{b,d}            P_2 = {a,b,c},{d}
+
+    w(e) - weight of a single edge.
+    A - partition of vertices, some in A and some not in A.
+    c(A) - crossing of A, sum of all weights from A to !A, if a edge connects a
+           node in a to another node in A its weight does not count.
+    Algorithm R:
+      - Create empty set A = {}.
+      - Iterate over all vertices in V.
+      - Flip a coin (1 or 0).
+      - If the result is 1, add v to A.
+
+
+=========
+OPTIONAL:
+=========
+
+  (( 2017-09-11 --  Currently not bothered. ))
+
+  Algorithm L.
+  ------------
+
+  Algorithm Z.
+  ------------
