@@ -1,55 +1,56 @@
 #!/usr/bin/env python3
 
 import sys
-import os
-import re as regex
 
-def make_graph(n, m, edges):
-    # vertex format := (edge-count, [ (dest, weight)* ])
-    vertex = [(0, []) for i in range(0, n)]
-    for edge in edges:
-        src, dest, weight = edge[0], edge[1], edge[2]
-        print("vertex=" + str(src) + " edge=" + "(" + str(dest) + "," + str(weight) + ")")
+EXIT_ERROR = -1
 
-        new_edge_count = vertex[src][0] + 1
+def print_graph(vertices):
+    # {x} specifies the x'th input to be used by format.
+    # "{0}-{0}-{1}".format('a','b') -> "a-a-b".
+    format_vertex = "vertex={0} edge={0}--{1}, w={2}"
+    for index, edge_list in enumerate(vertices, start=1):
+        for destination, weight in edge_list:
+            # Restore destination from 0..n-1 -> 1..n.
+            destination += 1
+            print(format_vertex.format(index, destination, weight))
 
-        new_edge_list = vertex[src][1]
-        new_edge_list.append((dest, weight))
+def main(args):
 
-        vertex[src] = (new_edge_count, new_edge_list)
-    return vertex
-
-def load_graph(folder, filename):
-
-    load_path = os.path.join(folder, filename)
-
-    if filename in os.listdir(folder):
-        print("Loading graph from path=" + load_path)
-        text = open(load_path, mode='r').read()
-        text = regex.sub(r'\s+', r' ', text)
-        data = text.split()
-        n, m, edges = data[0], data[1], data[2:]
-
-        # remap edge labels to [0, n-1]
-        edges = [int(i)-1 for i in edges]
-
-        # extract edge triples (src, dest, weight)
-        edges = [edges[i*3 : 3*(i+1)] for i in (range(0, int(len(edges) / 3)))]
-
-        return make_graph(int(n), int(m), edges)
-    else:
-        print("Unable to open file.")
-        sys.exit(1)
-
-def main(filename):
-    folder = "." + os.path.sep
-    load_graph(folder, filename)
-
-if __name__ == '__main__':
-    usage = "Usage: [python] {} input_file.txt"
-    args = sys.argv[1:]
+    usage = "[python] {} input_file.txt"
     if not args:
         print(usage.format(__file__))
-        sys.exit(-1)
+        return EXIT_ERROR
+
     filename = args[0]
-    main(filename)
+    vertices = []
+
+    try:
+        with open(filename, 'r') as fp:
+            lines = [line.strip() for line in fp.readlines()]
+            # Parse heading and create vertices structure.
+            heading = lines.pop(0)
+            num_vertices, num_edges = [int(num) for num in heading.split()]
+            # Can't use [[]]*num pattern, all inner lists points to same list.
+            # Adding an element to one adds it to all lists, weird..
+            vertices = [[] for _ in range(num_vertices)]
+            # Iterate over all data-lines.
+            for line in lines:
+                numbers = [int(x) for x in line.split()]
+                # Unpack numbers read from line.
+                index, destination, weight = numbers
+                # Move index and destination from 1..n to 0..n-1.
+                index -= 1
+                destination -= 1
+                # Add edge to correct index.
+                vertices[index].append((destination, weight))
+    except FileNotFoundError as e:
+        print("Could not open '{}', aborting.".format(filename),
+              file=sys.stderr)
+        return EXIT_ERROR
+
+    if '--print' in args:
+        print_graph(vertices)
+
+if __name__ == "__main__":
+    args = sys.argv[1:]
+    main(args)
