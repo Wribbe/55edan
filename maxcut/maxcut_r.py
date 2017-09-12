@@ -31,8 +31,6 @@ def algorithm_r(vertices, turns):
         if total_weight > cutset_weight:
             cutset, cutset_weight = A, total_weight
 
-    print(cutset)
-    print(cutset_weight)
     return (cutset, cutset_weight)
     
 
@@ -85,8 +83,15 @@ def main(args):
     if '--print-data' in args:
         print_data(vertices)
 
-    algorithm_r(vertices, 10)
-        
+    run_for_turns = 10
+    cutset, weight_sum = algorithm_r(vertices, run_for_turns)
+
+    print("weight_sum=" + str(weight_sum))
+    print("set=" + str(cutset))
+
+    return 0
+    
+    
 if __name__ == "__main__":
     args = sys.argv[1:]
     main(args)
