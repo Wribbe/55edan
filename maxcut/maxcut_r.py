@@ -32,7 +32,7 @@ def algorithm_r(vertices, turns):
             cutset, cutset_weight = A, total_weight
 
     return (cutset, cutset_weight)
-    
+
 
 def print_data(vertices):
     # {x} specifies the x'th input to be used by format.
@@ -44,47 +44,53 @@ def print_data(vertices):
             destination += 1
             print(format_vertex.format(index, destination, weight))
 
+            
+def load_data(filename):
+    vertices = []
+    with open(filename, 'r') as fp:
+        lines = [line.strip() for line in fp.readlines()]
+        # Parse heading and create vertices structure.
+        heading = lines.pop(0)
+        num_vertices, num_edges = [int(num) for num in heading.split()]
+        # Can't use [[]]*num pattern, all inner lists points to same list.
+        # Adding an element to one adds it to all lists, weird..
+        vertices = [[] for _ in range(num_vertices)]
+        # Iterate over all data-lines.
+        for line in lines:
+            numbers = [int(x) for x in line.split()]
+            # Unpack numbers read from line.
+            index, destination, weight = numbers
+            # Move index and destination from 1..n to 0..n-1.
+            index -= 1
+            destination -= 1
+            # Add edge to correct index.
+            vertices[index].append((destination, weight))
+            # Add same edge to to destination index.
+            vertices[destination].append((index, weight))
+    return vertices
+
+
 def main(args):
 
-    usage = "[python] {} input_file.txt [--print-data]"
-    if not args:
+    usage = "[python] {} input_file.txt iterations [--print-data]"
+    if len(args) < 2 :
         print(usage.format(__file__))
         return EXIT_ERROR
 
-    filename = args[0]
-    vertices = []
+    filename, iterations = args
+    iterations = int(iterations)
 
     try:
-        with open(filename, 'r') as fp:
-            lines = [line.strip() for line in fp.readlines()]
-            # Parse heading and create vertices structure.
-            heading = lines.pop(0)
-            num_vertices, num_edges = [int(num) for num in heading.split()]
-            # Can't use [[]]*num pattern, all inner lists points to same list.
-            # Adding an element to one adds it to all lists, weird..
-            vertices = [[] for _ in range(num_vertices)]
-            # Iterate over all data-lines.
-            for line in lines:
-                numbers = [int(x) for x in line.split()]
-                # Unpack numbers read from line.
-                index, destination, weight = numbers
-                # Move index and destination from 1..n to 0..n-1.
-                index -= 1
-                destination -= 1
-                # Add edge to correct index.
-                vertices[index].append((destination, weight))
-                # Add same edge to to destination index.
-                vertices[destination].append((index, weight))
+        vertices = load_data(filename)
     except FileNotFoundError as e:
-        print("Could not open '{}', aborting.".format(filename),
-              file=sys.stderr)
+        fmt_error = "Could not open '{}', aborting."
+        print(fmt_error.format(filename), file=sys.stderr)
         return EXIT_ERROR
 
     if '--print-data' in args:
         print_data(vertices)
 
-    run_for_turns = 10
-    cutset, weight_sum = algorithm_r(vertices, run_for_turns)
+    cutset, weight_sum = algorithm_r(vertices, iterations)
 
     print("weight_sum=" + str(weight_sum))
     print("set=" + str(cutset))
