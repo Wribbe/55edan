@@ -46,17 +46,28 @@ def load_data(filename):
             vertices[destination].append((index, weight))
     return vertices
 
-def c(subset_A):
-    return 1337
+def calculate_maxcut_with(vertices, subset_method):
+
+    def c(subset_A, vertices):
+        cutting_sum = 0
+        for index in subset_A:
+            for destination, weight in vertices[index]:
+                if destination not in subset_A:
+                    cutting_sum += weight
+        return cutting_sum
+
+    subset_A = subset_method(vertices)
+    return c(subset_A, vertices)
 
 def main(args):
 
-    usage = "[python] {} input_file.txt [--print-data]"
-    if not args:
+    usage = "[python] {} input_file.txt iterations [--print-data]"
+    if len(args) < 2 :
         print(usage.format(__file__))
         return EXIT_ERROR
 
-    filename = args[0]
+    filename, iterations = args
+    iterations = int(iterations)
 
     try:
         vertices = load_data(filename)
@@ -68,10 +79,10 @@ def main(args):
     if '--print-data' in args:
         print_data(vertices)
 
-    subset_A = R(vertices)
-    cut_sum = c(subset_A)
-
-    print("Cut sum = {}".format(cut_sum))
+    cut_sum_list = []
+    for _ in range(iterations):
+        cut_sum_list.append(calculate_maxcut_with(vertices, R))
+    print(cut_sum_list)
 
 if __name__ == "__main__":
     args = sys.argv[1:]
