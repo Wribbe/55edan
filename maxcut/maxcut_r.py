@@ -1,8 +1,40 @@
 #!/usr/bin/env python3
 
 import sys
+import random
 
 EXIT_ERROR = -1
+
+def algorithm_r(vertices, turns):
+    
+    cutset = []
+    cutset_weight = 0
+    
+    for turn in range(turns):
+        # Construct a member of the powerset of the vertex set of the graph.
+        A = [
+            vertex_id for vertex_id in range(len(vertices))
+                if random.randint(0, 1)
+        ]
+
+        # There is no risk of adding the same edge weight twice below since
+        # only edge weights that have a destination outside of A are included.
+
+        total_weight = 0
+        
+        for vertex in A:
+            for edge in vertices[vertex]:
+                destination, weight = edge
+                if not destination in A:
+                    total_weight += weight
+
+        if total_weight > cutset_weight:
+            cutset, cutset_weight = A, total_weight
+
+    print(cutset)
+    print(cutset_weight)
+    return (cutset, cutset_weight)
+    
 
 def print_data(vertices):
     # {x} specifies the x'th input to be used by format.
@@ -53,6 +85,8 @@ def main(args):
     if '--print-data' in args:
         print_data(vertices)
 
+    algorithm_r(vertices, 10)
+        
 if __name__ == "__main__":
     args = sys.argv[1:]
     main(args)
