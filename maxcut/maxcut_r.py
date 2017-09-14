@@ -10,27 +10,34 @@ def R(vertices):
     coin = lambda : random.choice([True,False])
     return [i for i, _ in enumerate(vertices) if coin()]
 
+counter = 0
+
 def S(vertices, whitelist=[]):
     """ All vertices start outside of A.
         - Vertices can be swapped from A <-> !A.
         - Goal to increase cut.
         - Continue until there is no swap that increases the size of the cut.
     """
-
+    global counter
     inside_a = True
     outside_a = False
     current_cut = 0
-
-    vertice_states = [outside_a] * len(vertices)
-
+    if whitelist:
+        vertice_states = [
+            inside_a if v in whitelist else outside_a
+            for v in range(len(vertices))
+        ] 
+    else:
+        vertice_states = [outside_a] * len(vertices)
+    
     def cut_value_if_swapped(index):
         swapped_state = not vertice_states[index]
         swap_cut = current_cut
-        for destination, _ in vertices[index]:
+        for destination, weight in vertices[index]:
             if swapped_state != vertice_states[destination]:
-                swap_cut += 1
+                swap_cut += weight
             else:
-                swap_cut -= 1
+                swap_cut -= weight
         return swap_cut
 
     def swap(index):
@@ -39,11 +46,10 @@ def S(vertices, whitelist=[]):
     while(True):
         prev_cut = current_cut
         for index, _ in enumerate(vertices):
-            if whitelist and index not in whitelist:
-                continue
             swap_cut = cut_value_if_swapped(index)
             if swap_cut > current_cut:
                 swap(index)
+                counter += 1
                 current_cut = swap_cut
         if prev_cut == current_cut:
             break # No change after full iteration.
@@ -61,9 +67,10 @@ def SR(vertices):
 def calculate_weight(subset, vertices):
     """ Calculate total weight for subset cut. """
     total_weight = 0
-    for vertice in vertices:
-        total_weight += sum([int(weight) for dest,weight in vertice if dest not
-            in subset])
+    for vertice in [vertices[i] for i in subset]:
+        for dest, weight in vertice:
+            if dest not in subset:
+                total_weight += int(weight)
     return total_weight
 
 

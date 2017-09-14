@@ -1,0 +1,13 @@
+Running time 
+R: O(n*max_deg(V_i))
+S: O(mW), m number of edges in E, W total weight of all edges
+RS: O(mW)
+
+n bits (one for each vertex)
+
+u v w:
+1 2 5
+2 3 1
+3 4 5
+
+Get stuck with weight 10 instead of maximum 11: 2,3 -- 1,4
