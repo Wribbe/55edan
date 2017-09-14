@@ -34,6 +34,49 @@ def algorithm_r(vertices, turns):
     return (cutset, cutset_weight)
 
 
+def S(vertices):
+    """ All vertices start outside of A.
+        - Vertices can be swapped from A <-> !A.
+        - Goal to increase cut.
+        - Continue until there is no swap that increases the size of the cut.
+    """
+
+    inside_a = True
+    outside_a = False
+    current_cut = 0
+
+    vertice_states = [outside_a] * len(vertices)
+
+    def cut_value_if_swapped(index):
+        swapped_state = not vertice_states[index]
+        swap_cut = current_cut
+        for destination, _ in vertices[index]:
+            if swapped_state != vertice_states[destination]:
+                swap_cut += 1
+            else:
+                swap_cut -= 1
+        return swap_cut
+
+    def swap(index):
+        vertice_states[index] = not vertice_states[index]
+
+    while(True):
+        prev_cut = current_cut
+        for index, _ in enumerate(vertices):
+            swap_cut = cut_value_if_swapped(index)
+            if swap_cut > current_cut:
+                swap(index)
+                current_cut = swap_cut
+        if prev_cut == current_cut:
+            break # No change after full iteration.
+
+    A = []
+    for index, state in enumerate(vertice_states):
+        if state == inside_a:
+            A.append(index)
+    return A
+
+
 def print_data(vertices):
     # {x} specifies the x'th input to be used by format.
     # "{0}-{0}-{1}".format('a','b') -> "a-a-b".
@@ -90,10 +133,12 @@ def main(args):
     if '--print-data' in args:
         print_data(vertices)
 
-    cutset, weight_sum = algorithm_r(vertices, iterations)
+    A = S(vertices)
 
-    print("weight_sum=" + str(weight_sum))
-    print("set=" + str(cutset))
+    #cutset, weight_sum = algorithm_r(vertices, iterations)
+
+    #print("weight_sum=" + str(weight_sum))
+    #print("set=" + str(cutset))
 
     return 0
 
