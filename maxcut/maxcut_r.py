@@ -6,10 +6,10 @@ import random
 EXIT_ERROR = -1
 
 def algorithm_r(vertices, turns):
-    
+
     cutset = []
     cutset_weight = 0
-    
+
     for turn in range(turns):
         # Construct a member of the powerset of the vertex set of the graph.
         A = [
@@ -21,7 +21,7 @@ def algorithm_r(vertices, turns):
         # only edge weights that have a destination outside of A are included.
 
         total_weight = 0
-        
+
         for vertex in A:
             for edge in vertices[vertex]:
                 destination, weight = edge
@@ -44,7 +44,7 @@ def print_data(vertices):
             destination += 1
             print(format_vertex.format(index, destination, weight))
 
-            
+
 def load_data(filename):
     vertices = []
     with open(filename, 'r') as fp:
@@ -96,8 +96,8 @@ def main(args):
     print("set=" + str(cutset))
 
     return 0
-    
-    
+
+
 if __name__ == "__main__":
     args = sys.argv[1:]
     main(args)
