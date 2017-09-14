@@ -10,7 +10,7 @@ def R(vertices):
     coin = lambda : random.choice([True,False])
     return [i for i, _ in enumerate(vertices) if coin()]
 
-def S(vertices):
+def S(vertices, whitelist=[]):
     """ All vertices start outside of A.
         - Vertices can be swapped from A <-> !A.
         - Goal to increase cut.
@@ -39,6 +39,8 @@ def S(vertices):
     while(True):
         prev_cut = current_cut
         for index, _ in enumerate(vertices):
+            if whitelist and index not in whitelist:
+                continue
             swap_cut = cut_value_if_swapped(index)
             if swap_cut > current_cut:
                 swap(index)
@@ -48,6 +50,12 @@ def S(vertices):
 
     in_a = lambda index : vertice_states[index]
     return [i for i, _ in enumerate(vertice_states) if in_a(i)]
+
+
+def SR(vertices):
+    """ Do initial partition with R, then use S and return. """
+    r_subset = R(vertices)
+    return S(vertices, r_subset)
 
 
 def calculate_weight(subset, vertices):
