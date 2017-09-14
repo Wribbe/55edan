@@ -7,7 +7,7 @@ EXIT_ERROR = -1
 
 def R(vertices):
     """ Partition vertices based on coin toss. """
-    coin = lambda: return random.choice[True,False]
+    coin = lambda : random.choice[True,False]
     return [i for i, _ in enumerate(vertices) if coin]
 
 def S(vertices):
@@ -46,11 +46,10 @@ def S(vertices):
         if prev_cut == current_cut:
             break # No change after full iteration.
 
-    A = []
-    for index, state in enumerate(vertice_states):
-        if state == inside_a:
-            A.append(index)
-    return A
+    in_a = lambda index : vertice_states[index]
+    return [i for i, _ in enumerate(vertice_states) if in_a(i)]
+
+
 
 
 def print_data(vertices):
