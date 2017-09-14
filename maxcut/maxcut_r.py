@@ -7,8 +7,8 @@ EXIT_ERROR = -1
 
 def R(vertices):
     """ Partition vertices based on coin toss. """
-    coin = lambda : random.choice[True,False]
-    return [i for i, _ in enumerate(vertices) if coin]
+    coin = lambda : random.choice([True,False])
+    return [i for i, _ in enumerate(vertices) if coin()]
 
 def S(vertices):
     """ All vertices start outside of A.
