@@ -123,12 +123,12 @@ def main(args):
     if '--print-data' in args:
         print_data(vertices)
 
+    A = R(vertices)
+    print(calculate_weight(A, vertices))
     A = S(vertices)
-
-    #cutset, weight_sum = algorithm_r(vertices, iterations)
-
-    #print("weight_sum=" + str(weight_sum))
-    #print("set=" + str(cutset))
+    print(calculate_weight(A, vertices))
+    A = SR(vertices)
+    print(calculate_weight(A, vertices))
 
     return 0
 
