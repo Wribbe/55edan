@@ -50,6 +50,13 @@ def S(vertices):
     return [i for i, _ in enumerate(vertice_states) if in_a(i)]
 
 
+def calculate_weight(subset, vertices):
+    """ Calculate total weight for subset cut. """
+    total_weight = 0
+    for vertice in vertices:
+        total_weight += sum([int(weight) for dest,weight in vertice if dest not
+            in subset])
+    return total_weight
 
 
 def print_data(vertices):
