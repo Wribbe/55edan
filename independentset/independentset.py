@@ -22,6 +22,45 @@ def load_data(filename):
     except FileNotFoundError:
         return []
 
+def num_neighbours(adjacency_matrix, G, vertex_id):#if (G[vertex_id])
+    available_vertices = [v for v in range(len(G)) if G[v]]
+    return sum([1 for v in available_vertices if adjacency_matrix[v][vertex_id]])
+
+def get_neighbours(adjacency_matrix,G,vertex_id):
+    available_vertices = [v for v in range(len(G)) if G[v]]
+    return [v for v in available_vertices if adjacency_matrix[v][vertex_id]]
+
+
+                
+def find_max_degree(adjacency_matrix, G):
+    # extract vertix ids that are still in G
+    available_vertices = [v for v in range(len(G)) if G[v]]
+    max_degree_vertex = (0, 0) # (vertex_id, degree)
+    for v in available_vertices:
+        numN = num_neighbours(adjacency_matrix, G, v) 
+        if numN > max_degree_vertex[1]:
+            max_degree_vertex = (v,numN)
+    return max_degree_vertex[0]
+
+def indep_set(adjacency_matrix, G, n):
+    if not any(G):
+        return 0
+    available_vertices = [v for v in range(len(G)) if G[v]]
+    #Finding a vertex without neighbours
+    for v in available_vertices:
+        if num_neighbours(adjacency_matrix,G,v) == 0:
+            new_G = list(G)
+            new_G[v] = False
+            return 1 + indep_set(adjacency_matrix,new_G,n)
+    max_vertex = find_max_degree(adjacency_matrix,G)
+    new_G = list(G)
+    new_G[max_vertex] = False
+    new_G2 = list(G)
+    for v in get_neightbours:
+        new_G2[v] = False
+    new_G2[max_vertex] = False
+    return max(1 + indep_set(adjacency_matrix,new_G,n),indep_set(adjacency_matrix,new_G2,n))
+    
 def main(args):
 
     fmt_usage = "Usage: [python] {} adjacency_data.in"
