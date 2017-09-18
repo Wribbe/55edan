@@ -13,7 +13,7 @@ def error(message="", usage=False, **kwargs):
 def load_data(filename):
     try:
         with open(filename, 'r') as fp:
-            lines = fp.readlines()
+            lines = [line.strip() for line in fp.readlines()]
             num_nodes = int(lines.pop(0))
             matrix = [[] for _ in range(num_nodes)]
             for matrix_row, string in zip(matrix, lines):
