@@ -1,0 +1,192 @@
+Exact Algorithm for Independent Set.
+------------------------------------
+
+  Independent set.
+  ----------------
+    - G = (V,E) -- Undirected, unweighted graph.
+    - n = |V|.
+    - Maximum Independent Set (MIS) -- In G, find the largest subset of
+      nodes that are not connected to each other in G.
+    - Largest size denoted by \alpha(G).
+    - NP - hard.
+
+  Notation.
+  ---------
+    - X is a subset of the vertices in V.
+    - G[X] is the graph if only vertices in X are included.
+    - v is a vertex.
+    - N[v] is all the close neighbours to v, v included.
+    - +/- as union notation, X + Y - Z -> Elements from X or Y but not from Z.
+
+  Algorithm R0.
+  -------------
+    - Recursive algorithm.
+    - Returns a value.
+    - Blueprint:
+
+        1.) If input is empty -> return 0.
+
+        2.) If there is a v without neighbours;
+
+              return 1 + R0(G[V-v])
+
+            Add 1 and return the value-result from running the same algorithm
+            again, but this time on a graph that has v removed.
+
+        3.) No v without neighbours;
+
+              u = vertex_of_maximum_degree() # On ties, pick whichever.
+              return max(1+R0(G[V-N[u]]), R0(G[V-u]))
+
+            Return the maximum value of either:
+              - 1 + R0-algo on the graph with u and all its close neighbours
+                removed. # The neighbours can no longer be in the MIS, since
+                         # they are connected to u. -> Only a +1 for the node
+                         # u, and not a +1 for each neighbour.
+              - The value returned by running the algorithm on a graph where u
+                is removed.
+
+  Inputs.
+  -------
+    - First row = number of nodes.
+    - Rest = adjacency matrix.
+
+  Deliverables.
+  -------------
+    1.) R0.
+    -------
+
+        [ ] - Implement R0, run on all data instances.
+        [ ] - Count all recursive calls to R0 -> plot log(calls) vs. num
+              vertexes.
+        [ ] - Calculate time complexity related to |V|.
+        [ ] - R0 with graph-copy to verify it works.
+        [ ] - R0 with graph-re-use to increase performance.
+
+    2.) R1.
+    -------
+
+        [ ] - Contemplate the what adding the following line of code to R0 will
+              result in (after empty line check).
+
+                if deg(v) == 1:
+                  return 1 + R1(G[V-N[v]])
+
+                # Return 1 + R1 run on new graph where all neighbours to v
+                # removed.
+
+        [ ] - Draw pictures for runs of the algorithm, before implementing.
+              (Will be shown to lab-supervisor.)
+        [ ] - Implement R1, run on all data instances.
+        [ ] - Count all recursive calls to R1 -> plot log(calls) vs. num
+              vertexes.
+        [ ] - Calculate time complexity related to |V|.
+
+    3.) R2.
+    -------
+
+        [ ] - Contemplate the what adding the following line of code to R0 will
+              result in (after empty line check).
+
+                if deg(v) == 2:
+                  if edge(neighbours(v)):
+                    return 1 + R2(G[V-N[v]])
+                    # Same call as R1.
+                  else:
+                    z = new_vertex()
+                    link_nodes(z, N(v))
+                    unlink_nodes(z, v)
+                    return 1 + R2(G[V-N[v]+z])
+
+        [ ] - Draw pictures for runs of the algorithm, before implementing.
+              (Will be shown to lab-supervisor.)
+        [ ] - Implement R2, run on all data instances.
+        [ ] - Count all recursive calls to R2 -> plot log(calls) vs. num
+              vertexes.
+        [ ] - Calculate time complexity related to |V|.
+
+    4.) Report.
+    -----------
+
+        [ ] - Fill out LaTeX report.
+
+  Independent Set Lab Report.
+  ---------------------------
+
+    [ ] - Fill in names.
+
+    Correctness.
+    ------------
+
+      [ ] - Algorithm R1 correctly computer \alpha(G) because:
+
+                  [...]
+
+            # Use little mathematical notation, whatever convinces Thore ==
+            # proof.
+
+      [ ] - Algorithm R2 correctly computer \alpha(G) because:
+
+                  [...]
+
+            # Use little mathematical notation, whatever convinces Thore ==
+            # proof.
+
+    Empirical Running time.
+    -----------------------
+
+      [ ] - The running time of R0, appear to be = [...]
+      [ ] - The running time of R1, appear to be = [...]
+      [ ] - The running time of R2, appear to be = [...]
+
+    Theoretical Upper bound.
+    ------------------------
+
+      Ti(n) -- Worst running time of any Rx algorithm over any graph with n
+               vertices.
+
+      Ti(n) non-decreasing ->
+
+        T0(n) <= max(T0(n-1),T0(n-1)+T0(n-1-dmax)) <= T0(n-1)+T0(n-2)
+
+        # dmax = degree of the vertex that is branched on.
+        # hard part -- when there are no isolated edges, the branching vertex
+        #              always has at least one neighbour.
+
+      [ ] -  Theoretical upper bound For R1:
+
+          T1(n) = [...]
+
+      [ ] -  Theoretical upper bound For R2:
+
+          T2(n) = [...]
+
+
+    Worst case upper bound.
+    -----------------------
+
+      # Hint: T(n) <= sum(i-1, k, ai*T(n-1)) -> Linear homogeneous recurrence
+      #                                         relation with constant
+      #                                         coefficients.
+      # Solvable by setting T(n) <= c^n.
+      # c = largest real root in characteristic polynomial:
+      #       x^k - sum(i=1, k, ai*x^(k-i).
+
+      [ ] - The running times of R0, R1, and R2 are in [...], [...] and [...]
+            respectively.
+
+  Optional.
+  ---------
+
+    -- nah.
+
+  Perspective.
+  ------------
+
+    Goals:
+    ------
+      - Medium skill implementation of recursive algorithms.
+      - Establish simple means to analyze recursive algorithms.
+      - Point out that even though the investigated algorithms are not
+        "advanced", there is no one who knows how to significantly better with
+        any other means.
