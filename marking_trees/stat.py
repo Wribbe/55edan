@@ -21,13 +21,23 @@ if __name__ == "__main__":
     data.update(json.load(open(filename)))
 
 
-  x_to_plot = []
-  y_to_plot = []
-  y_theoretical = []
+
+  plot_data = {}
+  key_plot_x = 'x'
+  key_plot_y = 'y'
+  key_plot_y_theoretical = 'y_theo'
 
   table_list = []
 
-  plot_data = open("plot-data.txt", 'w')
+  def theoretical(key, N):
+    if key == "R1":
+      Npart = (1.0/4.0)*int(N)
+      return 2 * Npart * H(Npart)
+    elif key == "R2":
+      return int(N)
+    elif key == "R3":
+      return (1.0/2.0)*int(N)
+
 
   for N in sorted(data, key=int):
 #    x_to_plot.append(int(N))
@@ -47,18 +57,22 @@ if __name__ == "__main__":
       # Try this one? --> n/4 * log ( n/4 ) + (n/4)*gamma.
       key_values.append((mean, std))
 
+      data_dict = plot_data.get(key)
+      if not data_dict:
+        data_dict = plot_data[key] = {
+              key_plot_x: [],
+              key_plot_y: [],
+              key_plot_y_theoretical: [],
+            }
+
+      theoretical_distrb = theoretical(key, N)
+      data_dict[key_plot_y].append(mean)
+      data_dict[key_plot_y_theoretical].append(theoretical_distrb)
+      data_dict[key_plot_x].append(int(N))
+
       if key == "R1":
 
-        Npart = (1.0/4.0)*int(N)
-        #theoretical_distrb = Npart*math.log(Npart, 2)
 
-        gamma = 0.5772156649
-#        theoretical_distrb = Npart * H(int(Npart))
-        theoretical_distrb = 2 * Npart * H(Npart)
-
-        y_to_plot.append(mean)
-        y_theoretical.append(theoretical_distrb)
-        x_to_plot.append(int(N))
         print("Theoretical distribution for R1? -- {}".format(theoretical_distrb))
         print("theo / mean = {}".format(theoretical_distrb / mean))
         print("mean / N = {}".format(mean/int(N)))
@@ -72,12 +86,25 @@ if __name__ == "__main__":
     print(' '.join(output_line))
 
 
+  def plot_theo(plt, x_to_plot, y_theoretical):
+    y_theoretical = [0 if y==0 else math.log(y) for y in y_theoretical]
+    plt.plot(x_to_plot, y_theoretical, marker='x')
 
+  for algo_name, plot_data in plot_data.items():
 
-  x_to_plot = [math.log(x) for x in x_to_plot]
-  y_theoretical = [0 if x==0 else math.log(x) for x in y_theoretical]
-  y_to_plot = [math.log(y) for y in y_to_plot]
-  plt.plot(x_to_plot, y_to_plot, marker='o')
-  plt.plot(x_to_plot, y_theoretical, marker='x')
-#  plt.x_axis = "N"
-  plt.show()
+    x_to_plot = plot_data[key_plot_x]
+    y_to_plot = plot_data[key_plot_y]
+
+    x_to_plot = [math.log(x) for x in x_to_plot]
+    y_to_plot = [math.log(y) for y in y_to_plot]
+
+    plt.plot(x_to_plot, y_to_plot, marker='o')
+
+    y_theoretical = plot_data[key_plot_y_theoretical]
+    plot_theo(plt, x_to_plot, y_theoretical)
+
+    if algo_name == "R2":
+      y_theoretical = [0.5*n for n in y_theoretical]
+      plot_theo(plt, x_to_plot, y_theoretical)
+
+    plt.show()
