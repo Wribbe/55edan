@@ -4,6 +4,8 @@ import sys
 import json
 import math
 
+import matplotlib.pyplot as plt
+
 def H(n):
   n = int(n)
   value = 0
@@ -21,8 +23,11 @@ if __name__ == "__main__":
 
   x_to_plot = []
   y_to_plot = []
-  
+  y_theoretical = []
+
   table_list = []
+
+  plot_data = open("plot-data.txt", 'w')
 
   for N in sorted(data, key=int):
 #    x_to_plot.append(int(N))
@@ -31,7 +36,7 @@ if __name__ == "__main__":
     for key in ["R1","R2","R3"]:
       data_dict = data[N]
       iterations = data_dict[key]
-      
+
       # Calculate mean.
       mean = numpy.mean(iterations)
 
@@ -41,7 +46,7 @@ if __name__ == "__main__":
 
       # Try this one? --> n/4 * log ( n/4 ) + (n/4)*gamma.
       key_values.append((mean, std))
-      
+
       if key == "R1":
 
         Npart = (1.0/4.0)*int(N)
@@ -52,24 +57,27 @@ if __name__ == "__main__":
         theoretical_distrb = 2 * Npart * H(Npart)
 
         y_to_plot.append(mean)
-        x_to_plot.append(theoretical_distrb)
-        x_to_plot.append(theoretical_distrb)
+        y_theoretical.append(theoretical_distrb)
+        x_to_plot.append(int(N))
         print("Theoretical distribution for R1? -- {}".format(theoretical_distrb))
         print("theo / mean = {}".format(theoretical_distrb / mean))
         print("mean / N = {}".format(mean/int(N)))
     print("")
     table_list.append((N, key_values))
+
   for N, data_list in table_list:
     output_line = ["{:<7}: ".format(N)]
     for index, (mean, std) in enumerate(data_list, start=1):
       output_line.append("R{}: {:.2E} +/- {:.2E} | ".format(index, mean, std))
     print(' '.join(output_line))
-      
 
 
 
-#  x_to_plot = [math.log(x, 2) for x in x_to_plot]
-#  y_to_plot = [math.log(y, 2) for y in y_to_plot]
-#  plt.plot(x_to_plot, y_to_plot)
+
+  x_to_plot = [math.log(x) for x in x_to_plot]
+  y_theoretical = [0 if x==0 else math.log(x) for x in y_theoretical]
+  y_to_plot = [math.log(y) for y in y_to_plot]
+  plt.plot(x_to_plot, y_to_plot, marker='o')
+  plt.plot(x_to_plot, y_theoretical, marker='x')
 #  plt.x_axis = "N"
-#  plt.show()
+  plt.show()
