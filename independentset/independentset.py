@@ -69,12 +69,20 @@ def main(args):
         return EXIT_ERROR
 
     filename = args[0]
-    matrix = load_data(filename)
-    if not matrix:
+    data_tokens = load_data(filename)
+    if not data_tokens:
         error("Could not open {}, aborting.".format(filename))
         return EXIT_ERROR
 
+    # Unpack data tokens.
+    num_nodes, matrix = data_tokens
+
     print(matrix)
+    G = [True] * num_nodes
+    print(G)
+    result = R1(matrix, G, num_nodes)
+    print("Result from R1:", result)
+    print("HELLO?")
 
 if __name__ == "__main__":
     args = sys.argv[1:]
