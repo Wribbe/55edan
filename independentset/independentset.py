@@ -18,28 +18,27 @@ def load_data(filename):
             matrix = [[] for _ in range(num_nodes)]
             for matrix_row, string in zip(matrix, lines):
                 matrix_row += [int(value) == 1 for value in string.split(' ')]
-            return matrix
+            return [num_nodes, matrix]
     except FileNotFoundError:
         return []
 
 def available_vertices(G):
     return [index for index, _ in enumerate(G) if G[index]]
 
-def num_neighbours(adjacency_matrix, G, vertex_id):#if (G[vertex_id])
-    return sum([1 for v in available_vertices(G) if adjacency_matrix[v][vertex_id]])
+def neighbours(adjacency_matrix,G,vertex_id):
 
-def get_neighbours(adjacency_matrix,G,vertex_id):
-    available_vertices = [v for v in range(len(G)) if G[v]]
-    return [v for v in available_vertices if adjacency_matrix[v][vertex_id]]
+    def edge_exists(index1, index2):
+        return adjacency_matrix[index1][index2]
 
-
+    available = available_vertices(G)
+    return [index for index in available if edge_exists(index, vertex_id)]
 
 def find_max_degree(adjacency_matrix, G):
-    # extract vertix ids that are still in G
+    # Extract vertex ids that are still in G.
     available_vertices = [v for v in range(len(G)) if G[v]]
     max_degree_vertex = (0, 0) # (vertex_id, degree)
     for v in available_vertices:
-        numN = num_neighbours(adjacency_matrix, G, v)
+        numN = len(neighbours(adjacency_matrix, G, v))
         if numN > max_degree_vertex[1]:
             max_degree_vertex = (v,numN)
     return max_degree_vertex[0]
@@ -48,9 +47,9 @@ def R1(adjacency_matrix, G, n):
     if not any(G):
         return 0
     available_vertices = [v for v in range(len(G)) if G[v]]
-    #Finding a vertex without neighbours
+    # Finding a vertex without neighbours
     for v in available_vertices:
-        if num_neighbours(adjacency_matrix,G,v) == 0:
+        if len(neighbours(adjacency_matrix,G,v)) == 0:
             new_G = list(G)
             new_G[v] = False
             return 1 + R1(adjacency_matrix,new_G,n)
