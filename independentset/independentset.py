@@ -45,9 +45,15 @@ def find_max_degree(adjacency_matrix, G):
 
 def myR1_recursive(matrix, nodes_left):
 
+    def adjacent(index):
+        row = matrix[index]
+        return [index for index, connected in enumerate(row) if connected]
+
     if not nodes_left:
         return 0
-    return 1337
+
+    for index in nodes_left:
+        print(adjacent(index))
 
 def myR1(matrix):
 
