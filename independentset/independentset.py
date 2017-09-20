@@ -42,7 +42,7 @@ def find_max_degree(adjacency_matrix, G):
             max_degree_vertex = (v,numN)
     return max_degree_vertex[0]
 
-def indep_set(adjacency_matrix, G, n):
+def R1(adjacency_matrix, G, n):
     if not any(G):
         return 0
     available_vertices = [v for v in range(len(G)) if G[v]]
@@ -51,7 +51,7 @@ def indep_set(adjacency_matrix, G, n):
         if num_neighbours(adjacency_matrix,G,v) == 0:
             new_G = list(G)
             new_G[v] = False
-            return 1 + indep_set(adjacency_matrix,new_G,n)
+            return 1 + R1(adjacency_matrix,new_G,n)
     max_vertex = find_max_degree(adjacency_matrix,G)
     new_G = list(G)
     new_G[max_vertex] = False
@@ -59,8 +59,8 @@ def indep_set(adjacency_matrix, G, n):
     for v in get_neightbours:
         new_G2[v] = False
     new_G2[max_vertex] = False
-    return max(1 + indep_set(adjacency_matrix,new_G,n),indep_set(adjacency_matrix,new_G2,n))
-    
+    return max(1 + R1(adjacency_matrix,new_G,n),R1(adjacency_matrix,new_G2,n))
+
 def main(args):
 
     fmt_usage = "Usage: [python] {} adjacency_data.in"
