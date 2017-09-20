@@ -22,9 +22,11 @@ def load_data(filename):
     except FileNotFoundError:
         return []
 
+def available_vertices(G):
+    return [index for index, _ in enumerate(G) if G[index]]
+
 def num_neighbours(adjacency_matrix, G, vertex_id):#if (G[vertex_id])
-    available_vertices = [v for v in range(len(G)) if G[v]]
-    return sum([1 for v in available_vertices if adjacency_matrix[v][vertex_id]])
+    return sum([1 for v in available_vertices(G) if adjacency_matrix[v][vertex_id]])
 
 def get_neighbours(adjacency_matrix,G,vertex_id):
     available_vertices = [v for v in range(len(G)) if G[v]]
