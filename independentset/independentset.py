@@ -24,7 +24,7 @@ def load_data(filename):
     except FileNotFoundError:
         return []
 
-def myR1_recursive(matrix, nodes_left):
+def R_recursive(matrix, nodes_left):
 
     global num_call
     print("On recursive call: {}\r".format(num_call), end="")
@@ -77,7 +77,7 @@ def myR1_recursive(matrix, nodes_left):
             u, w = adjacent_nodes
             connected = matrix[u][w]
             if connected:
-                return 1 + myR1_recursive(matrix,
+                return 1 + R_recursive(matrix,
                         remove_index_and_adjacent(index))
             else:
                 # Add z.
@@ -97,27 +97,27 @@ def myR1_recursive(matrix, nodes_left):
                 # Add z to nodes left.
                 new_nodes_left = remove_index_and_adjacent(index)
                 new_nodes_left.append(True)
-                return 1 + myR1_recursive(matrix_copy, new_nodes_left)
+                return 1 + R_recursive(matrix_copy, new_nodes_left)
 
         elif nodes_adjacent == 1: # R1 - trick.
-            return 1 + myR1_recursive(matrix, remove_index_and_adjacent(index))
+            return 1 + R_recursive(matrix, remove_index_and_adjacent(index))
         elif nodes_adjacent == 0: # R0 - trick.
-            return 1 + myR1_recursive(matrix, remove_index(index))
+            return 1 + R_recursive(matrix, remove_index(index))
 
     max_node = node_with_most_adjacent(matrix)
 
     without_max_and_adjacent = remove_index_and_adjacent(max_node)
     without_max = remove_index(max_node)
 
-    val_without_max_adjacent = myR1_recursive(matrix, without_max_and_adjacent)
-    val_without_max = myR1_recursive(matrix, without_max)
+    val_without_max_adjacent = R_recursive(matrix, without_max_and_adjacent)
+    val_without_max = R_recursive(matrix, without_max)
 
     return max(1+val_without_max_adjacent, val_without_max)
 
-def myR1(matrix):
+def R(matrix):
 
     nodes_left = [True] * len(matrix)
-    return myR1_recursive(matrix, nodes_left)
+    return R_recursive(matrix, nodes_left)
 
 def main(args):
 
@@ -134,11 +134,8 @@ def main(args):
 
     # Unpack data tokens.
     num_nodes, matrix = data_tokens
-#
-#    G = [True] * num_nodes
-#    result = R1(matrix, G, num_nodes)
 
-    print("\nResult from myR1: {}".format(myR1(matrix)))
+    print("\nResult from R: {}".format(R(matrix)))
 
 if __name__ == "__main__":
     args = sys.argv[1:]
