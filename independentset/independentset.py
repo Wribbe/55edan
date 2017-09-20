@@ -33,9 +33,9 @@ def myR1_recursive(matrix, nodes_left):
     def adjacent(index):
         adjacent_nodes = []
         row = matrix[index]
-        for left_index, left in enumerate(nodes_left):
-            if left and row[left_index]:
-                adjacent_nodes.append(left_index)
+        for node_index, left in enumerate(nodes_left):
+            if left and row[node_index]:
+                adjacent_nodes.append(node_index)
         return adjacent_nodes
 
     def num_adjacent(index):
@@ -47,8 +47,8 @@ def myR1_recursive(matrix, nodes_left):
         for index, left in enumerate(nodes_left):
             if not left:
                 continue
-            nodes_ajdacent = num_adjacent(index)
-            if nodes_ajdacent > max_adjacent:
+            nodes_adjacent = num_adjacent(index)
+            if nodes_adjacent > max_adjacent:
                 max_index = index
         return max_index
 
@@ -66,10 +66,42 @@ def myR1_recursive(matrix, nodes_left):
     if not any(nodes_left):
         return 0
 
-    for index, valid in enumerate(nodes_left):
+    for index, valid in enumerate(list(nodes_left)):
         if not valid:
             continue
-        if num_adjacent(index) == 0:
+
+        adjacent_nodes = adjacent(index)
+        nodes_adjacent = len(adjacent_nodes)
+
+        if nodes_adjacent == 2: # R2 - trick.
+            u, w = adjacent_nodes
+            connected = matrix[u][w]
+            if connected:
+                return 1 + myR1_recursive(matrix,
+                        remove_index_and_adjacent(index))
+            else:
+                # Add z.
+                matrix_copy = [list(row)+[False] for row in matrix]
+                z_index = len(matrix_copy[0])-1
+                matrix_copy += [[False] * (z_index + 1)]
+                # Get adjacent.
+                adjacent_nodes_u = adjacent(u)
+                adjacent_nodes_w = adjacent(w)
+                # Remove current index (v).
+                adjacent_nodes_u.remove(index)
+                adjacent_nodes_w.remove(index)
+                # Link it up.
+                for node_index in adjacent_nodes_u + adjacent_nodes_w:
+                    matrix_copy[z_index][node_index] = True
+                    matrix_copy[node_index][z_index] = True
+                # Add z to nodes left.
+                new_nodes_left = remove_index_and_adjacent(index)
+                new_nodes_left.append(True)
+                return 1 + myR1_recursive(matrix_copy, new_nodes_left)
+
+        elif nodes_adjacent == 1: # R1 - trick.
+            return 1 + myR1_recursive(matrix, remove_index_and_adjacent(index))
+        elif nodes_adjacent == 0: # R0 - trick.
             return 1 + myR1_recursive(matrix, remove_index(index))
 
     max_node = node_with_most_adjacent(matrix)
