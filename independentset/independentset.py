@@ -24,6 +24,9 @@ def load_data(filename):
     except FileNotFoundError:
         return []
 
+R1 = False
+R2 = False
+
 def R_recursive(matrix, nodes_left):
 
     global num_call
@@ -73,7 +76,7 @@ def R_recursive(matrix, nodes_left):
         adjacent_nodes = adjacent(index)
         nodes_adjacent = len(adjacent_nodes)
 
-        if nodes_adjacent == 2: # R2 - trick.
+        if nodes_adjacent == 2 and R2: # R2 - trick.
             u, w = adjacent_nodes
             connected = matrix[u][w]
             if connected:
@@ -99,7 +102,7 @@ def R_recursive(matrix, nodes_left):
                 new_nodes_left.append(True)
                 return 1 + R_recursive(matrix_copy, new_nodes_left)
 
-        elif nodes_adjacent == 1: # R1 - trick.
+        elif nodes_adjacent == 1 and R1: # R1 - trick.
             return 1 + R_recursive(matrix, remove_index_and_adjacent(index))
         elif nodes_adjacent == 0: # R0 - trick.
             return 1 + R_recursive(matrix, remove_index(index))
@@ -114,19 +117,19 @@ def R_recursive(matrix, nodes_left):
 
     return max(1+val_without_max_adjacent, val_without_max)
 
-def R(matrix):
+def R(matrix, tricks=['R1','R2']):
 
     nodes_left = [True] * len(matrix)
     return R_recursive(matrix, nodes_left)
 
 def main(args):
 
-    fmt_usage = "Usage: [python] {} adjacency_data.in"
+    fmt_usage = "Usage: [python] {} adjacency_data.in [R1] [R2]"
     if not args:
         error(fmt_usage.format(__file__),usage=True)
         return EXIT_ERROR
 
-    filename = args[0]
+    filename = args.pop(0)
     data_tokens = load_data(filename)
     if not data_tokens:
         error("Could not open {}, aborting.".format(filename))
@@ -134,8 +137,16 @@ def main(args):
 
     # Unpack data tokens.
     num_nodes, matrix = data_tokens
+    tricks = args[:2]
+    global R1, R2
+    for t in tricks:
+        if t == "R1":
+            R1 = True
+        elif t == "R2":
+            R2 = True
 
-    print("\nResult from R: {}".format(R(matrix)))
+    print("Status: R1 = {}, R2 = {}".format(R1, R2))
+    print("\nResult from R: {}.".format(R(matrix, tricks)))
 
 if __name__ == "__main__":
     args = sys.argv[1:]
