@@ -1,0 +1,11 @@
+python independentset.py data/g30.in
+On recursive call: 57752
+Result from myR1: 14
+
+python independentset.py data/g40.in
+On recursive call: 979643
+Result from myR1: 16
+
+python independentset.py data/g50.in
+On recursive call: 9845980
+Result from myR1: 19
