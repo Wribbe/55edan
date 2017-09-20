@@ -31,13 +31,13 @@ def get_neighbours(adjacency_matrix,G,vertex_id):
     return [v for v in available_vertices if adjacency_matrix[v][vertex_id]]
 
 
-                
+
 def find_max_degree(adjacency_matrix, G):
     # extract vertix ids that are still in G
     available_vertices = [v for v in range(len(G)) if G[v]]
     max_degree_vertex = (0, 0) # (vertex_id, degree)
     for v in available_vertices:
-        numN = num_neighbours(adjacency_matrix, G, v) 
+        numN = num_neighbours(adjacency_matrix, G, v)
         if numN > max_degree_vertex[1]:
             max_degree_vertex = (v,numN)
     return max_degree_vertex[0]
