@@ -43,6 +43,17 @@ def find_max_degree(adjacency_matrix, G):
             max_degree_vertex = (v,numN)
     return max_degree_vertex[0]
 
+def myR1_recursive(matrix, nodes_left):
+
+    if not nodes_left:
+        return 0
+    return 1337
+
+def myR1(matrix):
+
+    nodes_left = list(range(len(matrix)))
+    return myR1_recursive(matrix, nodes_left)
+
 def R1(adjacency_matrix, G, n):
 
     # If nodes available, end recursion.
@@ -92,10 +103,11 @@ def main(args):
 
     # Unpack data tokens.
     num_nodes, matrix = data_tokens
+#
+#    G = [True] * num_nodes
+#    result = R1(matrix, G, num_nodes)
 
-    G = [True] * num_nodes
-    result = R1(matrix, G, num_nodes)
-    print("Result from R1:", result)
+    print("Result from myR1: {}".format(myR1(matrix)))
 
 if __name__ == "__main__":
     args = sys.argv[1:]
