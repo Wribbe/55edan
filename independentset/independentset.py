@@ -44,23 +44,38 @@ def find_max_degree(adjacency_matrix, G):
     return max_degree_vertex[0]
 
 def R1(adjacency_matrix, G, n):
+
+    # If nodes available, end recursion.
+    # If the graph (G?) is empty, end recursion.
     if not any(G):
         return 0
-    available_vertices = [v for v in range(len(G)) if G[v]]
-    # Finding a vertex without neighbours
-    for v in available_vertices:
+
+    # Find any vertex that has 0 pals.
+    for v in available_vertices(G):
         if len(neighbours(adjacency_matrix,G,v)) == 0:
+            #print("Found a vertice with no pals.", v)
             new_G = list(G)
             new_G[v] = False
             return 1 + R1(adjacency_matrix,new_G,n)
+
+    # If there were no 0-pal verticies, find the one with maximum pals.
     max_vertex = find_max_degree(adjacency_matrix,G)
+    #print("max_vertex", max_vertex)
     new_G = list(G)
     new_G[max_vertex] = False
     new_G2 = list(G)
-    for v in get_neightbours:
+
+    # Iterate over all max-pal pals and remove them from new G.
+    for v in neighbours(adjacency_matrix, G, max_vertex):
+        #print(neighbours(adjacency_matrix, G, max_vertex))
         new_G2[v] = False
     new_G2[max_vertex] = False
-    return max(1 + R1(adjacency_matrix,new_G,n),R1(adjacency_matrix,new_G2,n))
+
+    value_of_R1_max_vertex_removed = R1(adjacency_matrix,new_G,n)
+    value_of_R1_max_and_pals_removed = 1 + R1(adjacency_matrix,new_G2,n)
+
+    return max(value_of_R1_max_vertex_removed,
+            value_of_R1_max_and_pals_removed)
 
 def main(args):
 
@@ -78,12 +93,9 @@ def main(args):
     # Unpack data tokens.
     num_nodes, matrix = data_tokens
 
-    print(matrix)
     G = [True] * num_nodes
-    print(G)
     result = R1(matrix, G, num_nodes)
     print("Result from R1:", result)
-    print("HELLO?")
 
 if __name__ == "__main__":
     args = sys.argv[1:]
