@@ -24,27 +24,6 @@ def load_data(filename):
     except FileNotFoundError:
         return []
 
-def available_vertices(G):
-    return [index for index, _ in enumerate(G) if G[index]]
-
-def neighbours(adjacency_matrix,G,vertex_id):
-
-    def edge_exists(index1, index2):
-        return adjacency_matrix[index1][index2]
-
-    available = available_vertices(G)
-    return [index for index in available if edge_exists(index, vertex_id)]
-
-def find_max_degree(adjacency_matrix, G):
-    # Extract vertex ids that are still in G.
-    available_vertices = [v for v in range(len(G)) if G[v]]
-    max_degree_vertex = (0, 0) # (vertex_id, degree)
-    for v in available_vertices:
-        numN = len(neighbours(adjacency_matrix, G, v))
-        if numN > max_degree_vertex[1]:
-            max_degree_vertex = (v,numN)
-    return max_degree_vertex[0]
-
 def myR1_recursive(matrix, nodes_left):
 
     global num_call
@@ -103,45 +82,10 @@ def myR1_recursive(matrix, nodes_left):
 
     return max(1+val_without_max_adjacent, val_without_max)
 
-
 def myR1(matrix):
 
     nodes_left = [True] * len(matrix)
     return myR1_recursive(matrix, nodes_left)
-
-def R1(adjacency_matrix, G, n):
-
-    # If nodes available, end recursion.
-    # If the graph (G?) is empty, end recursion.
-    if not any(G):
-        return 0
-
-    # Find any vertex that has 0 pals.
-    for v in available_vertices(G):
-        if len(neighbours(adjacency_matrix,G,v)) == 0:
-            #print("Found a vertice with no pals.", v)
-            new_G = list(G)
-            new_G[v] = False
-            return 1 + R1(adjacency_matrix,new_G,n)
-
-    # If there were no 0-pal verticies, find the one with maximum pals.
-    max_vertex = find_max_degree(adjacency_matrix,G)
-    #print("max_vertex", max_vertex)
-    new_G = list(G)
-    new_G[max_vertex] = False
-    new_G2 = list(G)
-
-    # Iterate over all max-pal pals and remove them from new G.
-    for v in neighbours(adjacency_matrix, G, max_vertex):
-        #print(neighbours(adjacency_matrix, G, max_vertex))
-        new_G2[v] = False
-    new_G2[max_vertex] = False
-
-    value_of_R1_max_vertex_removed = R1(adjacency_matrix,new_G,n)
-    value_of_R1_max_and_pals_removed = 1 + R1(adjacency_matrix,new_G2,n)
-
-    return max(value_of_R1_max_vertex_removed,
-            value_of_R1_max_and_pals_removed)
 
 def main(args):
 
