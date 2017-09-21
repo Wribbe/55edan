@@ -1,0 +1,68 @@
+
+\documentclass{tufte-handout}
+\usepackage{amsmath,amsthm}
+
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{tikz}
+
+\newtheorem{claim}{Claim}[section]
+\title{\sf Marking Trees}
+\date{}
+\begin{document}
+\maketitle
+
+\section{Lab Report: Marking Trees}
+
+
+by Stefan Eng, {name}, {name} and {name}.
+
+\subsection{Results}
+
+For $i\in\{1,2,3\}$, the number of rounds $R_i$ spent until the tree
+is completely marked in process $i$ is given in the following table.
+The table shows the result of 24 repeated
+trails.
+
+In the last column, report the expected value of $R_1$ for each $N$, using the
+formula derived from your theoretical analysis in the following section
+
+\medskip\noindent
+\begin{tabular}{ l l l l l l }
+% WARNING: This table the (brilliant) siunitx package.
+% This allows typesetting of nicely aligned numbers.
+% If this is too much to absorb, just use a normal Latex table.
+% (Or do the table in another tool, export as PDF, and include it.)
+% Or do the whole report in your favourite word processor instead.
+\toprule
+ { $N$ } & { $R_1$ } & {$R_2$} & {$R_3$} & {$\mathbf E[R_1]$}\\\midrule
+3 & 2.40e+00 $\pm$ 8.00e-01 & 2.00e+00 & 2.00e+00 & \\
+7 & 5.60e+00 $\pm$ 1.85e+00 & 5.00e+00 $\pm$ 8.94e-01 & 4.00e+00 & \\
+15 & 2.48e+01 $\pm$ 1.00e+01 & 9.80e+00 $\pm$ 1.17e+00 & 8.00e+00 & \\
+31 & 3.90e+01 $\pm$ 9.94e+00 & 2.06e+01 $\pm$ 1.36e+00 & 1.60e+01 & \\
+63 & 1.01e+02 $\pm$ 2.01e+01 & 4.82e+01 $\pm$ 7.47e+00 & 3.20e+01 & \\
+127 & 2.57e+02 $\pm$ 2.69e+01 & 1.08e+02 $\pm$ 4.82e+00 & 6.40e+01 & \\
+255 & 6.92e+02 $\pm$ 2.43e+02 & 2.20e+02 $\pm$ 1.08e+01 & 1.28e+02 & \\
+511 & 1.52e+03 $\pm$ 2.37e+02 & 4.69e+02 $\pm$ 5.61e+00 & 2.56e+02 & \\
+1023 & 3.23e+03 $\pm$ 4.80e+02 & 9.63e+02 $\pm$ 4.91e+01 & 5.12e+02 & \\
+2047 & 7.36e+03 $\pm$ 1.68e+03 & 1.96e+03 $\pm$ 5.15e+01 & 1.02e+03 & \\
+4095 & 1.82e+04 $\pm$ 3.27e+03 & 3.98e+03 $\pm$ 3.25e+01 & 2.05e+03 & \\
+8191 & 3.73e+04 $\pm$ 3.78e+03 & 8.00e+03 $\pm$ 1.01e+02 & 4.10e+03 & \\
+16383 & 7.58e+04 $\pm$ 4.11e+03 & 1.61e+04 $\pm$ 1.98e+02 & 8.19e+03 & \\
+32767 & 1.41e+05 $\pm$ 1.31e+04 & 3.24e+04 $\pm$ 2.19e+02 & 1.64e+04 & \\
+65535 & 3.23e+05 $\pm$ 2.61e+04 & 6.51e+04 $\pm$ 1.66e+02 & 3.28e+04 & \\
+131071 & 7.38e+05 $\pm$ 8.30e+04 & 1.31e+05 $\pm$ 2.71e+02 & 6.55e+04 & \\
+262143 & 1.39e+06 $\pm$ 1.12e+05 & 2.61e+05 $\pm$ 4.98e+02 & 1.31e+05 & \\
+524287 & 2.93e+06 $\pm$ 1.59e+05 & 5.23e+05 $\pm$ 4.30e+02 & 2.62e+05 & \\
+1048575 & 6.74e+06 $\pm$ 5.83e+05 & 1.05e+06 $\pm$ 4.51e+02 & 5.24e+05 & \\
+\bottomrule
+\end{tabular}
+
+\subsection{Analysis}
+
+Our experimental data indicates that $\mathbf E [R_1]$ is [$\ldots$]. Optional:
+$\mathbf E[R_2]$ [$\cdots$], and $\mathbf E[R_3]$ [$\cdots$].
+
+Theoretically, the behaviour of $R_1$ can be explained as follows: [$\cdots$]
+
+\end{document}

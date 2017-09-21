@@ -72,7 +72,6 @@ if __name__ == "__main__":
 
       if key == "R1":
 
-
         print("Theoretical distribution for R1? -- {}".format(theoretical_distrb))
         print("theo / mean = {}".format(theoretical_distrb / mean))
         print("mean / N = {}".format(mean/int(N)))
@@ -80,10 +79,19 @@ if __name__ == "__main__":
     table_list.append((N, key_values))
 
   for N, data_list in table_list:
-    output_line = ["{:<7}: ".format(N)]
+    # LaTeX format.
+    output_line = [N, '&']
     for index, (mean, std) in enumerate(data_list, start=1):
-      output_line.append("R{}: {:.2E} +/- {:.2E} | ".format(index, mean, std))
+        output_line.append("{:.2e}".format(mean))
+        if std:
+            output_line.append("$\\pm$ {:.2e}".format(std))
+        output_line.append('&')
+    output_line.append('\\\\')
     print(' '.join(output_line))
+#    output_line = ["{:<7}: ".format(N)]
+#    for index, (mean, std) in enumerate(data_list, start=1):
+#      output_line.append("R{}: {:.2E} +/- {:.2E} | ".format(index, mean, std))
+#    print(' '.join(output_line))
 
 
   def plot_theo(plt, x_to_plot, y_theoretical):
@@ -107,4 +115,4 @@ if __name__ == "__main__":
       y_theoretical = [0.5*n for n in y_theoretical]
       plot_theo(plt, x_to_plot, y_theoretical)
 
-    plt.show()
+    #plt.show()
