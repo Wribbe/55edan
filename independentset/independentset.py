@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+import time
 
 EXIT_ERROR = -1
 
@@ -17,9 +18,11 @@ def load_data(filename):
         with open(filename, 'r') as fp:
             lines = [line.strip() for line in fp.readlines()]
             num_nodes = int(lines.pop(0))
-            matrix = [[] for _ in range(num_nodes)]
+            matrix = [set() for _ in range(num_nodes)]
             for matrix_row, string in zip(matrix, lines):
-                matrix_row += [int(value) == 1 for value in string.split(' ')]
+                for index, value in enumerate(string.split(' ')):
+                    if value.strip() == "1":
+                        matrix_row.add(index)
             return [num_nodes, matrix]
     except FileNotFoundError:
         return []
@@ -27,102 +30,109 @@ def load_data(filename):
 R1 = False
 R2 = False
 
-def R_recursive(matrix, nodes_left):
+matrix = ""
+first_time = time.time()
+prev_time = time.time()
 
-    global num_call
-    print("On recursive call: {}\r".format(num_call), end="")
+adjacent = []
+
+def R_recursive(nodes_left):
+    global num_call, matrix, prev_time
+
+    if len(nodes_left) == 0:
+        return 0
+
+    current_time = time.time()
+    if current_time - prev_time >= 1:
+        prev_time = current_time
+        print("On recursive call: {}.\r".format(num_call), end="")
+
     num_call += 1
-
-    def adjacent(index):
-        adjacent_nodes = []
-        row = matrix[index]
-        for node_index, left in enumerate(nodes_left):
-            if left and row[node_index]:
-                adjacent_nodes.append(node_index)
-        return adjacent_nodes
-
-    def num_adjacent(index):
-        return int(len(adjacent(index)))
 
     def node_with_most_adjacent(matrix):
         max_adjacent = 0
         max_index = 0
-        for index, left in enumerate(nodes_left):
-            if not left:
-                continue
-            nodes_adjacent = num_adjacent(index)
+        for index in nodes_left:
+            nodes_adjacent = len(matrix[index])
             if nodes_adjacent > max_adjacent:
                 max_index = index
         return max_index
 
-    def remove_index(index):
-        copy = list(nodes_left)
-        copy[index] = False
-        return copy
+    for index in nodes_left:
 
-    def remove_index_and_adjacent(index):
-        copy = remove_index(index)
-        for index_node in adjacent(index):
-            copy[index_node] = False
-        return copy
-
-    if not any(nodes_left):
-        return 0
-
-    for index, valid in enumerate(list(nodes_left)):
-        if not valid:
-            continue
-
-        adjacent_nodes = adjacent(index)
+        # Get adjacent and number adjacent.
+        adjacent_nodes = matrix[index]
         nodes_adjacent = len(adjacent_nodes)
+
+        # Create nodes_left without index.
+        left_without_index = set(nodes_left)
+        left_without_index.remove(index)
+
+        # Create nodes_left without index and adjacent.
+        left_without_adjacent = set(left_without_index)
+        left_without_adjacent -= adjacent_nodes
 
         if nodes_adjacent == 2 and R2: # R2 - trick.
             u, w = adjacent_nodes
-            connected = matrix[u][w]
+            connected = w in matrix[u]
             if connected:
-                return 1 + R_recursive(matrix,
-                        remove_index_and_adjacent(index))
+                return 1 + R_recursive(left_without_index)
             else:
-                # Add z.
-                matrix_copy = [list(row)+[False] for row in matrix]
-                z_index = len(matrix_copy[0])-1
-                matrix_copy += [[False] * (z_index + 1)]
+                # Calculate z.
+                z_index = len(matrix)-1
+
                 # Get adjacent.
-                adjacent_nodes_u = adjacent(u)
-                adjacent_nodes_w = adjacent(w)
+                adjacent_nodes_u = matrix[u]
+                adjacent_nodes_w = matrix[w]
                 # Remove current index (v).
                 adjacent_nodes_u.remove(index)
                 adjacent_nodes_w.remove(index)
+
                 # Link it up.
-                for node_index in adjacent_nodes_u + adjacent_nodes_w:
-                    matrix_copy[z_index][node_index] = True
-                    matrix_copy[node_index][z_index] = True
+                new_adjacent = set()
+                new_adjacent.update(adjacent_nodes_u.union(adjacent_nodes_w))
+                for index in new_adjacent:
+                    matrix[index].add(z_index)
+                # Add adjacency for new z to matrix.
+                matrix.append(new_adjacent)
+
+                # Remove u,w, and v from nodes left.
+                new_nodes_left = set(left_without_index)
+                new_nodes_left.remove(u)
+                new_nodes_left.remove(w)
+
                 # Add z to nodes left.
-                new_nodes_left = remove_index_and_adjacent(index)
-                new_nodes_left.append(True)
-                return 1 + R_recursive(matrix_copy, new_nodes_left)
+                new_nodes_left.add(z_index)
+
+                return 1 + R_recursive(new_nodes_left)
 
         elif nodes_adjacent == 1 and R1: # R1 - trick.
-            return 1 + R_recursive(matrix, remove_index_and_adjacent(index))
+            return 1 + R_recursive(left_without_adjacent)
         elif nodes_adjacent == 0: # R0 - trick.
-            return 1 + R_recursive(matrix, remove_index(index))
+            return 1 + R_recursive(left_without_index)
 
     max_node = node_with_most_adjacent(matrix)
 
-    without_max_and_adjacent = remove_index_and_adjacent(max_node)
-    without_max = remove_index(max_node)
+    without_max = set(nodes_left)
+    without_max -= set([max_node])
 
-    val_without_max_adjacent = R_recursive(matrix, without_max_and_adjacent)
-    val_without_max = R_recursive(matrix, without_max)
+    without_max_adjacent = set(without_max)
+    without_max_adjacent -= matrix[max_node]
+
+    val_without_max_adjacent = R_recursive(without_max_adjacent)
+    val_without_max = R_recursive(without_max)
 
     return max(1+val_without_max_adjacent, val_without_max)
 
-def R(matrix, tricks=['R1','R2']):
+def R():
 
-    nodes_left = [True] * len(matrix)
-    return R_recursive(matrix, nodes_left)
+    nodes_left = set(range(len(matrix)))
+    return R_recursive(nodes_left)
 
 def main(args):
+
+    global matrix
+    global R1, R2
 
     fmt_usage = "Usage: [python] {} adjacency_data.in [R1] [R2]"
     if not args:
@@ -138,7 +148,6 @@ def main(args):
     # Unpack data tokens.
     num_nodes, matrix = data_tokens
     tricks = args[:2]
-    global R1, R2
     for t in tricks:
         if t == "R1":
             R1 = True
@@ -146,7 +155,7 @@ def main(args):
             R2 = True
 
     print("Status: R1 = {}, R2 = {}".format(R1, R2))
-    print("\nResult from R: {}.".format(R(matrix, tricks)))
+    print("\nResult from R: {}.".format(R()))
 
 if __name__ == "__main__":
     args = sys.argv[1:]

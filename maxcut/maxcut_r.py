@@ -3,6 +3,8 @@
 import sys
 import random
 
+import matplotlib.pyplot as plt
+
 EXIT_ERROR = -1
 
 def R(vertices):
@@ -26,10 +28,10 @@ def S(vertices, whitelist=[]):
         vertice_states = [
             inside_a if v in whitelist else outside_a
             for v in range(len(vertices))
-        ] 
+        ]
     else:
         vertice_states = [outside_a] * len(vertices)
-    
+
     def cut_value_if_swapped(index):
         swapped_state = not vertice_states[index]
         swap_cut = current_cut
@@ -130,14 +132,49 @@ def main(args):
     if '--print-data' in args:
         print_data(vertices)
 
-    A = R(vertices)
-    print(calculate_weight(A, vertices))
-    A = S(vertices)
-    print(calculate_weight(A, vertices))
-    A = SR(vertices)
-    print(calculate_weight(A, vertices))
+    max_R = 0
+    max_S = 0
+    max_SR = 0
 
-    return 0
+    Rs = []
+    Ss = []
+    SRs = []
+
+    for _ in range(iterations):
+
+        A = R(vertices)
+        wR = calculate_weight(A, vertices)
+        max_R = max(wR, max_R)
+        Rs.append(wR)
+
+        A = S(vertices)
+        wS = calculate_weight(A, vertices)
+        max_S = max(wS, max_S)
+        Ss.append(wS)
+
+        A = SR(vertices)
+        wSR = calculate_weight(A, vertices)
+        max_SR = max(wSR, max_SR)
+        SRs.append(wSR)
+
+    print("max R: {}".format(max_R))
+    print("max S: {}".format(max_S))
+    print("max SR: {}".format(max_SR))
+
+    aR = sum(Rs)/len(Rs)
+    aS = sum(Ss)/len(Ss)
+    aRS = sum(SRs)/len(SRs)
+
+    print("Average R: {}".format(aR))
+    print("Average S: {}".format(aS))
+    print("Average RS: {}".format(aRS))
+
+    plt.hist(Rs)
+    plt.savefig('hist_R.pdf')
+
+    plt.clf()
+    plt.hist(SRs)
+    plt.savefig('hist_SR.pdf')
 
 
 if __name__ == "__main__":
