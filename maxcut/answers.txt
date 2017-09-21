@@ -1,5 +1,5 @@
 Running time 
-R: O(n*max_deg(V_i))
+R: O(n + m), m number of edges
 S: O(mW), m number of edges in E, W total weight of all edges
 RS: O(mW)
 
@@ -11,3 +11,13 @@ u v w:
 3 4 5
 
 Get stuck with weight 10 instead of maximum 11: 2,3 -- 1,4
+
+
+
+
+
+Adam Ohlsson
+Stefan Eng
+(Jens Mellberg)
+(Jauo Ch ...)
+Maxcut
