@@ -1,1 +1,7 @@
+__pycache__
+*.json
+*.aux
+*.log
+*.out
+*.pdf
 *.swp
