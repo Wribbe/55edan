@@ -54,8 +54,8 @@ if __name__ == "__main__":
       std_div_n = numpy.divide(std, int(N))
       print("Mean for {} = {:.2f}, std = {:.2f}, std/N = {}".format(key, mean, std, std_div_n))
 
-      # Try this one? --> n/4 * log ( n/4 ) + (n/4)*gamma.
-      key_values.append((mean, std))
+      theoretical_distrb = theoretical(key, N)
+      key_values.append((mean, std, theoretical_distrb))
 
       data_dict = plot_data.get(key)
       if not data_dict:
@@ -65,7 +65,6 @@ if __name__ == "__main__":
               key_plot_y_theoretical: [],
             }
 
-      theoretical_distrb = theoretical(key, N)
       data_dict[key_plot_y].append(mean)
       data_dict[key_plot_y_theoretical].append(theoretical_distrb)
       data_dict[key_plot_x].append(int(N))
@@ -81,11 +80,13 @@ if __name__ == "__main__":
   for N, data_list in table_list:
     # LaTeX format.
     output_line = [N, '&']
-    for index, (mean, std) in enumerate(data_list, start=1):
+    for mean, std, _ in data_list:
         output_line.append("{:.2e}".format(mean))
         if std:
             output_line.append("$\\pm$ {:.2e}".format(std))
         output_line.append('&')
+    output_line.append("{:.2e}".format(data_list[0][-1]))
+    output_line.append('&')
     output_line.append('\\\\')
     print(' '.join(output_line))
 #    output_line = ["{:<7}: ".format(N)]
@@ -94,9 +95,9 @@ if __name__ == "__main__":
 #    print(' '.join(output_line))
 
 
-  def plot_theo(plt, x_to_plot, y_theoretical):
+  def plot_theo(plt, x_to_plot, y_theoretical, **kwargs):
     y_theoretical = [0 if y==0 else math.log(y) for y in y_theoretical]
-    plt.plot(x_to_plot, y_theoretical, marker='x')
+    plt.plot(x_to_plot, y_theoretical, **kwargs)
 
   for algo_name, plot_data in plot_data.items():
 
@@ -106,13 +107,27 @@ if __name__ == "__main__":
     x_to_plot = [math.log(x) for x in x_to_plot]
     y_to_plot = [math.log(y) for y in y_to_plot]
 
-    plt.plot(x_to_plot, y_to_plot, marker='o')
+    plt.plot(x_to_plot, y_to_plot, marker='o', label="Experimental")
+    plt.suptitle("Values for algorithm {}".format(algo_name))
+    plt.xlabel('log(N)')
+    plt.ylabel('log(mean(iterations))')
 
     y_theoretical = plot_data[key_plot_y_theoretical]
-    plot_theo(plt, x_to_plot, y_theoretical)
 
-    if algo_name == "R2":
+    if algo_name == "R1":
+      theo_label = "Theoretical (2 * 1/4 * n * H(n))"
+      plot_theo(plt, x_to_plot, y_theoretical, marker='x', label=theo_label)
+    elif algo_name == "R2":
+      theo_label = "Theoretical (n)"
+      plot_theo(plt, x_to_plot, y_theoretical, marker='x', label=theo_label)
       y_theoretical = [0.5*n for n in y_theoretical]
-      plot_theo(plt, x_to_plot, y_theoretical)
+      theo_label = "Theoretical (1/2 * n)"
+      plot_theo(plt, x_to_plot, y_theoretical, marker='x', label=theo_label)
+    elif algo_name == "R3":
+      theo_label = "Theoretical (1/2 * n)"
+      plot_theo(plt, x_to_plot, y_theoretical, marker='x', label=theo_label)
 
+    plt.legend()
     #plt.show()
+    plt.savefig('values_{}.pdf'.format(algo_name))
+    plt.clf()
