@@ -12,7 +12,7 @@ def main(args):
         visit_counter[current_node] += 1
         print(current_node)
     for v in range(0,len(visit_counter)):
-        print("Frequency {}: {}".format(v,visit_counter[v]/iterations))
+        print("Frequency {}: {}".format(v,float(visit_counter[v])/float(iterations)))
 
 def load_data(filename):
     try:
