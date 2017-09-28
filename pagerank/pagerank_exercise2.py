@@ -75,22 +75,18 @@ def degree(adjacency_matrix, vertex, N):
 
 def load_data(filename):
     print(filename)
-    #try:
-    if 0 == 0:
-        with open(filename, 'r') as fp:
-            lines = [line.strip() for line in fp.readlines()]
-            N = int(lines.pop(0))
-            adjacency_matrix = [[0 for j in range(N)] for i in range(N)]
-            nodes = []
-            for line in lines:
-                nodes = [n for n in line.split() if n.strip()]
-                i = 0
-                while i < len(nodes):
-                    adjacency_matrix[int(nodes[i])][int(nodes[i+1])]+=1
-                    i+=2
-            return [N, adjacency_matrix]
-   # except FileNotFoundError:
-    #    return []
+    with open(filename, 'r') as fp:
+        lines = [line.strip() for line in fp.readlines()]
+        N = int(lines.pop(0))
+        adjacency_matrix = [[0 for j in range(N)] for i in range(N)]
+        nodes = []
+        for line in lines:
+            nodes = [n for n in line.split() if n.strip()]
+            i = 0
+            while i < len(nodes):
+                adjacency_matrix[int(nodes[i])][int(nodes[i+1])]+=1
+                i+=2
+        return [N, adjacency_matrix]
 
 if __name__ == "__main__":
     args = sys.argv[1:]
