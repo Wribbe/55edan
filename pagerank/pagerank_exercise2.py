@@ -15,7 +15,7 @@ def main(args):
 
     print("counting steps until stable ...")
     count, newP = nsteps(P, N)
-    
+
     print("step count=", count)
     print(newP)
     return 0
@@ -26,13 +26,13 @@ def print_row_sums(matrix, N):
         for col in range(N):
             row_sum += matrix[row][col]
         print("row_sum=", row_sum)
-    
+
 def nsteps(P,N):
     count = 1
     lastP = P
     newP = np.dot(P,P)
     current_diff = diff(newP,lastP,N)
-    
+
     while current_diff > 0.005:
         print("current_diff=", current_diff)
         lastP = newP
@@ -41,12 +41,12 @@ def nsteps(P,N):
         current_diff = diff(newP,lastP,N)
 
     return count,newP
-    
+
 def diff(P,P2,N):
     max_dif = 0
     for row in range(N):
         for col in range(N):
-            current = abs(P[row][col]-P2[row][col]) 
+            current = abs(P[row][col]-P2[row][col])
             max_dif = max(max_dif,current)
     return max_dif
 
@@ -55,7 +55,7 @@ def create_P(HD, N):
     ones = np.array([np.ones(N) for _ in range(N)])
     P = alpha * HD + ((1-alpha)/N)*ones
     return P
-        
+
 def create_HD(adjacency_matrix,N):
     HD = [[0 for j in range(N)] for i in range(N)]
     for row in range(N):
@@ -64,7 +64,7 @@ def create_HD(adjacency_matrix,N):
             if  deg != 0:
                 HD[row][col] = adjacency_matrix[row][col] / float(deg)
             else:
-                HD[row][col] = 1.0/N                            
+                HD[row][col] = 1.0/N
     return HD
 
 def degree(adjacency_matrix, vertex, N):
@@ -72,7 +72,7 @@ def degree(adjacency_matrix, vertex, N):
     for col in range(N):
         total += adjacency_matrix[vertex][col]
     return total
-    
+
 def load_data(filename):
     print(filename)
     #try:
