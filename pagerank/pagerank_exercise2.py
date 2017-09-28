@@ -78,7 +78,7 @@ def load_data(filename):
     with open(filename, 'r') as fp:
         lines = [line.strip() for line in fp.readlines()]
         N = int(lines.pop(0))
-        adjacency_matrix = [[0 for j in range(N)] for i in range(N)]
+        adjacency_matrix = [[0]*N for _ in range(N)]
         nodes = []
         for line in lines:
             nodes = [n for n in line.split() if n.strip()]
