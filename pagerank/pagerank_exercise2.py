@@ -81,10 +81,10 @@ def load_data(filename):
         adjacency_matrix = [[0]*N for _ in range(N)]
         nodes = []
         for line in lines:
-            nodes = [n for n in line.split() if n.strip()]
+            nodes = [int(n) for n in line.split() if n.strip()]
             i = 0
             while i < len(nodes):
-                adjacency_matrix[int(nodes[i])][int(nodes[i+1])]+=1
+                adjacency_matrix[nodes[i]][nodes[i+1]]+=1
                 i+=2
         return [N, adjacency_matrix]
 
