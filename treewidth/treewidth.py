@@ -83,15 +83,7 @@ def read_data(filename):
 
     return data_tree, data_decomp
 
-def main(args):
-
-    usage = "Usage: {} data/any-file-in-data".format(__file__)
-    if not args:
-        print(usage)
-        return
-
-    filename = args[0]
-    tree_indices, (bag_contents, bag_edges) = read_data(filename)
+def fancy_print_data(tree_indices, bag_contents, bag_edges):
 
     print("Edges: ")
     fmt_edge = "  There is a edge from: {} -> {}"
@@ -112,6 +104,18 @@ def main(args):
     for edge_from, edges in enumerate(bag_edges):
         for edge_to in edges:
             print(fmt_edge.format(edge_from+1, edge_to+1))
+
+def main(args):
+
+    usage = "Usage: {} data/any-file-in-data".format(__file__)
+    if not args:
+        print(usage)
+        return
+
+    filename = args[0]
+    tree_indices, (bag_contents, bag_edges) = read_data(filename)
+
+    fancy_print_data(tree_indices, bag_contents, bag_edges)
 
 if __name__ == "__main__":
     main(sys.argv[1:])
