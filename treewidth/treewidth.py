@@ -92,9 +92,26 @@ def main(args):
 
     filename = args[0]
     tree_indices, (bag_contents, bag_edges) = read_data(filename)
-    print("tree indices: {}.".format(tree_indices))
-    print("bag contents: {}.".format(bag_contents))
-    print("bag edges: {}.".format(bag_edges))
+
+    print("Edges: ")
+    fmt_edge = "  There is a edge from: {} -> {}"
+    for edge_from, edges in enumerate(tree_indices):
+        for edge_to in edges:
+            print(fmt_edge.format(edge_from+1, edge_to+1))
+
+    print("")
+    print("Bag contents: ")
+    fmt_content = "  Content of bag #{}: {}"
+    for number, contents in enumerate(bag_contents):
+        content_string = ','.join([str(n+1) for n in contents])
+        print(fmt_content.format(number+1, content_string))
+
+    print("")
+    print("Bag edges: ")
+    fmt_edge = "  There is a edge from: {} -> {}"
+    for edge_from, edges in enumerate(bag_edges):
+        for edge_to in edges:
+            print(fmt_edge.format(edge_from+1, edge_to+1))
 
 if __name__ == "__main__":
     main(sys.argv[1:])
