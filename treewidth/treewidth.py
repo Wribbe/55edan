@@ -79,7 +79,7 @@ def read_data(filename):
     else:
         data_tree = read_tree(get_data(filename))
         other_name = "{}{}".format(base_name, SUFFIX_DECOMP)
-        data_decomp = read_tree(get_data(other_name))
+        data_decomp = read_decomp(get_data(other_name))
 
     return data_tree, data_decomp
 
