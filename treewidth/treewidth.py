@@ -16,7 +16,7 @@ class Node():
 
 def read_data(filename):
 
-    base_name = filename.split(".")[0]
+    base_name = filename.rsplit(".", 1)[0]
 
     def is_comment(line):
         if line.strip().startswith('c'):
