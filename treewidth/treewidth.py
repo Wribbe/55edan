@@ -2,18 +2,93 @@
 
 import os
 import sys
+import itertools
 
 SUFFIX_DECOMP = ".td"
 SUFFIX_TREE = ".gr"
 
 class Node():
 
-    def __init__(self):
-        self.children = []
+    def __init__(self,c,b,G):
+        self.children = c
+        self.bag_vertices = b
+        self.table = {}
+        self.U = []
+        for s in create_combinations(self.bag_vertices):
+            if isIndependent(s,G):
+                self.U.append(s)
+                
+    def Ft(self,u):
+        if self.is_in_table(u):
+            return self.get_table_value(u)
+        #Build table if no table entry
+        if self.children:
+             value = len(u)
+             for c in self.children:
+                 Vt = self.bag_vertices
+                 value += c.get_max(u, Vt)
+             self.add_to_table(u, value)
+             return value
+        else:
+            for u in self.U:
+                self.add_to_table(u,len(u))
+                
+        if not self.is_in_table(u):
+            print("Undefined table entry")
+            sys.exit(1)
+            
+        return self.get_table_value(u)
+        
+    def print_tree(self):
+        for c in self.children:
+            c.print_tree()
+        print(self.bag_vertices)
+    
+    def is_in_table(self,K):
+        return str(K) in self.table
+        
+    def add_to_table(self,K,V):
+        self.table[str(K)] = V
+        
+    def get_table_value(self,K):
+        return self.table[str(K)]
+    
+    def get_max(self,u,Vt):
+        valid_sets = []
+        for ui in self.U:
+            if ui.intersection(Vt) == u.intersection(self.bag_vertices):
+                valid_sets.append(ui)
 
-    def add(child):
-        self.children.append(child)
+        # TODO: Store the set ui which corresponds to the max
+        return max([self.Ft(ui) - len(ui.intersection(u)) for ui in valid_sets])
+                    
+            
+            
+        
+def create_combinations(L):
+    combinations = []
+    for n in xrange(len(L) + 1):
+        for sset in itertools.combinations(L, n):
+            # prevent add of empty set
+            if sset:
+                combinations.append(set(sset))
+    return combinations
 
+def isIndependent(S,G):
+    setList = list(S)
+    for i in range(len(setList)):
+        for j in range(i+1,len(setList)):
+            if isConnected(setList[i],setList[j],G):
+                return False
+    return True
+            
+
+def isConnected(v1,v2,G):
+    return v2 in G[v1]
+    
+def algorithm(root):
+    return root.get_max(set(),set())
+    
 def read_data(filename):
 
     base_name = filename.rsplit(".", 1)[0]
@@ -105,6 +180,8 @@ def fancy_print_data(tree_indices, bag_contents, bag_edges):
         for edge_to in edges:
             print(fmt_edge.format(edge_from+1, edge_to+1))
 
+
+            
 def main(args):
 
     usage = "Usage: {} data/any-file-in-data".format(__file__)
@@ -114,8 +191,24 @@ def main(args):
 
     filename = args[0]
     tree_indices, (bag_contents, bag_edges) = read_data(filename)
-
+   
+    
     fancy_print_data(tree_indices, bag_contents, bag_edges)
+    root = build_tree(tree_indices,bag_contents,bag_edges,0)
 
+    root.print_tree()
+    
+    print(algorithm(root))
+    
+def build_tree(T,bags,E,current):
+    children = []
+    for child in extract_children(E,current):
+        children.append(build_tree(T,bags,E,child))
+    return Node(children,bags[current],T)   
+
+def extract_children(node_edges, node):
+    return node_edges[node]
+
+    
 if __name__ == "__main__":
     main(sys.argv[1:])
