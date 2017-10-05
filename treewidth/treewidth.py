@@ -17,26 +17,18 @@ class Node():
         for s in create_combinations(self.bag_vertices):
             if isIndependent(s,G):
                 self.U.append(s)
-                
-    def Ft(self,u):
-        if self.is_in_table(u):
-            return self.get_table_value(u)
-        #Build table if no table entry
+
+    def make_table_entry(self, u):
+        value = len(u)
         if self.children:
-             value = len(u)
-             for c in self.children:
-                 Vt = self.bag_vertices
+            Vt = self.bag_vertices
+            for c in self.children:
                  value += c.get_max(u, Vt)
-             self.add_to_table(u, value)
-             return value
-        else:
-            for u in self.U:
-                self.add_to_table(u,len(u))
-                
-        if not self.is_in_table(u):
-            print("Undefined table entry")
-            sys.exit(1)
+        self.add_to_table(u, value)
             
+    def Ft(self,u):
+        if not self.is_in_table(u):
+            self.make_table_entry(u)
         return self.get_table_value(u)
         
     def print_tree(self):
