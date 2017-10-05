@@ -18,6 +18,20 @@ class Node():
             if isIndependent(s,G):
                 self.U.append(s)
 
+    def print_tree(self):
+        for c in self.children:
+            c.print_tree()
+        print(self.bag_vertices)
+                
+    def is_in_table(self,K):
+        return str(K) in self.table
+        
+    def add_to_table(self,K,V):
+        self.table[str(K)] = V
+        
+    def get_table_value(self,K):
+        return self.table[str(K)]
+                
     def make_table_entry(self, u):
         value = len(u)
         if self.children:
@@ -30,21 +44,7 @@ class Node():
         if not self.is_in_table(u):
             self.make_table_entry(u)
         return self.get_table_value(u)
-        
-    def print_tree(self):
-        for c in self.children:
-            c.print_tree()
-        print(self.bag_vertices)
-    
-    def is_in_table(self,K):
-        return str(K) in self.table
-        
-    def add_to_table(self,K,V):
-        self.table[str(K)] = V
-        
-    def get_table_value(self,K):
-        return self.table[str(K)]
-    
+                
     def get_max(self,u,Vt):
         valid_sets = []
         for ui in self.U:
