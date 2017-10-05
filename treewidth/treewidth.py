@@ -106,6 +106,7 @@ def read_data(filename):
             # Move index range from 1..n to 0..n-1.
             edge_from, edge_to = [int(n)-1 for n in line.strip().split()]
             edge_sets[edge_from].add(edge_to)
+            edge_sets[edge_to].add(edge_from)
         return edge_sets
 
     def read_decomp(data):
@@ -130,6 +131,7 @@ def read_data(filename):
                 # Move index ranges from 1..n to 0..n-1.
                 edge_from, edge_to = [int(n)-1 for n in line.split()]
                 bag_edges[edge_from].add(edge_to)
+                bag_edges[edge_to].add(edge_from)
         return bag_contents, bag_edges
 
     data_tree = ""
@@ -179,24 +181,32 @@ def main(args):
 
     filename = args[0]
     tree_indices, (bag_contents, bag_edges) = read_data(filename)
-   
-    
+
+
     fancy_print_data(tree_indices, bag_contents, bag_edges)
     root = build_tree(tree_indices,bag_contents,bag_edges,0)
 
     root.print_tree()
-    
+
     print(algorithm(root))
-    
+
+visited = set()
+
 def build_tree(T,bags,E,current):
+    global visited
     children = []
+    if current in visited:
+        return None
+    visited.add(current)
     for child in extract_children(E,current):
-        children.append(build_tree(T,bags,E,child))
-    return Node(children,bags[current],T)   
+        got_node = build_tree(T,bags,E,child)
+        if got_node:
+            children.append(got_node)
+    return Node(children,bags[current],T)
 
 def extract_children(node_edges, node):
     return node_edges[node]
 
-    
+
 if __name__ == "__main__":
     main(sys.argv[1:])
