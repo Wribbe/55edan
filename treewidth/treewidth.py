@@ -180,6 +180,22 @@ def main(args):
         return
 
     filename = args[0]
+
+    if os.path.isdir(filename):
+
+        def get_size_of_instance(filename):
+            with open(filename, 'r') as fp:
+                data = fp.readlines()
+                while data[0].strip().startswith("c"):
+                    data.pop(0)
+                size = data[0].split()[3]
+                return size
+
+        file_name_list = [os.path.join(filename, name) for name in os.listdir(filename) if name.endswith(SUFFIX_DECOMP)]
+        file_name_list = sorted(file_name_list, key=get_size_of_instance)
+        print(file_name_list)
+        return
+
     tree_indices, (bag_contents, bag_edges) = read_data(filename)
 
 
