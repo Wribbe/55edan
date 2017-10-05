@@ -61,17 +61,13 @@ class Node():
 
         # TODO: Store the set ui which corresponds to the max
         return max([self.Ft(ui) - len(ui.intersection(u)) for ui in valid_sets])
-                    
-            
-            
-        
+
+
 def create_combinations(L):
     combinations = []
-    for n in xrange(len(L) + 1):
+    for n in range(len(L) + 1):
         for sset in itertools.combinations(L, n):
-            # prevent add of empty set
-            if sset:
-                combinations.append(set(sset))
+            combinations.append(set(sset))
     return combinations
 
 def isIndependent(S,G):
