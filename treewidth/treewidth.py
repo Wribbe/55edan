@@ -3,9 +3,36 @@
 import os
 import sys
 import itertools
+import time
+
+FILENAMES =\
+"""data/web4
+data/WorldMap
+data/FibonacciTree_10
+data/StarGraph_100
+data/TutteGraph
+data/DorogovtsevGoltsevMendesGraph
+data/HanoiTowerGraph_4_3
+data/TaylorTwographDescendantSRG_3
+data/CirculantGraph_20_5
+data/AhrensSzekeresGeneralizedQuadrangleGraph_3
+data/DesarguesGraph
+data/FranklinGraph
+data/FolkmanGraph
+data/GoldnerHararyGraph
+data/FriendshipGraph_10
+data/HerschelGraph
+data/HoltGraph
+data/Klein7RegularGraph
+data/McGeeGraph
+data/TaylorTwographSRG_3
+data/WellsGraph
+data/SierpinskiGasketGraph_3""".splitlines()
 
 SUFFIX_DECOMP = ".td"
 SUFFIX_TREE = ".gr"
+
+visited = set()
 
 class Node():
 
@@ -75,6 +102,8 @@ def isConnected(v1,v2,G):
     return v2 in G[v1]
 
 def algorithm(root):
+    if root == None:
+        return 1
     return root.get_max(set(),set())
 
 def read_data(filename):
@@ -171,8 +200,28 @@ def fancy_print_data(tree_indices, bag_contents, bag_edges):
             print(fmt_edge.format(edge_from+1, edge_to+1))
 
 
+def parse_filename(filename):
+    global visited
+    visited = set()
+
+    tree_indices, (bag_contents, bag_edges) = read_data(filename)
+
+#    fancy_print_data(tree_indices, bag_contents, bag_edges)
+    root = build_tree(tree_indices,bag_contents,bag_edges,0)
+
+#    root.print_tree()
+
+    time_begin = time.time()
+    size_max_indep_set = algorithm(root)
+    time_end = time.time()
+    n = len(tree_indices)
+    time_diff = time_end-time_begin
+
+    return size_max_indep_set, n, time_diff
 
 def main(args):
+
+    result_file = "dumped_data.txt"
 
     usage = "Usage: {} data/any-file-in-data".format(__file__)
     if not args:
@@ -181,32 +230,37 @@ def main(args):
 
     filename = args[0]
 
-    if os.path.isdir(filename):
+    if os.path.isdir(filename): # Is a directory.
 
         def get_size_of_instance(filename):
             with open(filename, 'r') as fp:
                 data = fp.readlines()
                 while data[0].strip().startswith("c"):
                     data.pop(0)
-                size = data[0].split()[3]
-                return size
+                tokens = data[0].split()
+                return int(tokens[3])
 
-        file_name_list = [os.path.join(filename, name) for name in os.listdir(filename) if name.endswith(SUFFIX_DECOMP)]
+        #file_name_list = [os.path.join(filename, name) for name in os.listdir(filename) if name.endswith(SUFFIX_DECOMP)]
+        file_name_list = ["{}{}".format(name, SUFFIX_DECOMP) for name in FILENAMES]
         file_name_list = sorted(file_name_list, key=get_size_of_instance)
-        print(file_name_list)
-        return
 
-    tree_indices, (bag_contents, bag_edges) = read_data(filename)
+#        for filename in file_name_list:
+#            print(filename)
+#            print("w = ",get_size_of_instance(filename))
+#        return
 
+        for filename in file_name_list:
+            w = get_size_of_instance(filename)
+            if w == 0: # Ignore empty data.
+                continue
+            size_max_indep_set, n, time_diff = parse_filename(filename)
+            result = ",".join([str(elem) for elem in [filename, n, w,  size_max_indep_set, time_diff]])
+            with open(result_file, 'a') as fp:
+                fp.write(result+'\n')
 
-    fancy_print_data(tree_indices, bag_contents, bag_edges)
-    root = build_tree(tree_indices,bag_contents,bag_edges,0)
+    else: # Single file.
+        print(parse_filename(filename))
 
-    root.print_tree()
-
-    print(algorithm(root))
-
-visited = set()
 
 def build_tree(T,bags,E,current):
     global visited
