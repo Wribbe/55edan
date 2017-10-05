@@ -22,16 +22,16 @@ class Node():
         for c in self.children:
             c.print_tree()
         print(self.bag_vertices)
-                
+
     def is_in_table(self,K):
         return str(K) in self.table
-        
+
     def add_to_table(self,K,V):
         self.table[str(K)] = V
-        
+
     def get_table_value(self,K):
         return self.table[str(K)]
-                
+
     def make_table_entry(self, u):
         value = len(u)
         if self.children:
@@ -39,18 +39,18 @@ class Node():
             for c in self.children:
                  value += c.get_max(u, Vt)
         self.add_to_table(u, value)
-            
+
     def Ft(self,u):
         if not self.is_in_table(u):
             self.make_table_entry(u)
         return self.get_table_value(u)
-                
+
     def get_max(self,u,Vt):
         valid_sets = []
         for ui in self.U:
             if ui.intersection(Vt) == u.intersection(self.bag_vertices):
                 valid_sets.append(ui)
-        
+
         # TODO: Store the set ui which corresponds to the max
         return max([self.Ft(ui) - len(ui.intersection(u)) for ui in valid_sets])
 
@@ -69,14 +69,14 @@ def isIndependent(S,G):
             if isConnected(setList[i],setList[j],G) or isConnected(setList[j],setList[i],G):
                 return False
     return True
-            
+
 
 def isConnected(v1,v2,G):
     return v2 in G[v1]
-    
+
 def algorithm(root):
     return root.get_max(set(),set())
-    
+
 def read_data(filename):
 
     base_name = filename.rsplit(".", 1)[0]
@@ -169,7 +169,7 @@ def fancy_print_data(tree_indices, bag_contents, bag_edges):
             print(fmt_edge.format(edge_from+1, edge_to+1))
 
 
-            
+
 def main(args):
 
     usage = "Usage: {} data/any-file-in-data".format(__file__)
