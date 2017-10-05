@@ -50,7 +50,7 @@ class Node():
         for ui in self.U:
             if ui.intersection(Vt) == u.intersection(self.bag_vertices):
                 valid_sets.append(ui)
-
+        
         # TODO: Store the set ui which corresponds to the max
         return max([self.Ft(ui) - len(ui.intersection(u)) for ui in valid_sets])
 
@@ -66,7 +66,7 @@ def isIndependent(S,G):
     setList = list(S)
     for i in range(len(setList)):
         for j in range(i+1,len(setList)):
-            if isConnected(setList[i],setList[j],G):
+            if isConnected(setList[i],setList[j],G) or isConnected(setList[j],setList[i],G):
                 return False
     return True
             
